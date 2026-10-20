@@ -1,0 +1,172 @@
+\clearpage
+\seccionInforme{3. Componentes de React Native para la organización de la interfaz}
+\phantomsection\addcontentsline{toc}{section}{3. Componentes de React Native para la organización de la interfaz}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.1 Cómo dibuja React Native una interfaz}
+\colabtitle{3.1 Cómo dibuja React Native una interfaz}
+
+En React Native la interfaz se describe con componentes de React escritos en JavaScript o TypeScript, pero lo que aparece en pantalla no es HTML: el renderizador \textbf{Fabric} traduce cada componente del núcleo a una vista nativa del sistema operativo [2], [13]. Las posiciones y tamaños se calculan con \textbf{Yoga}, un motor de layout multiplataforma que implementa el modelo Flexbox [15]. La Tabla 6 resume la correspondencia documentada para los componentes básicos.
+
+\begin{table}[H]
+\centering\small
+\caption{Componentes del núcleo y la vista nativa que los representa en cada plataforma (según [2])}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.190\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.360\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Componente} & \color{white}\textbf{Android} & \color{white}\textbf{iOS} & \color{white}\textbf{Web (react-native-web)} & \color{white}\textbf{Función} \\ \hline
+\texttt{<View>} & ViewGroup & UIView & \texttt{<div>} & Contenedor con flexbox, estilo, toques y accesibilidad. \\ \hline
+\rowcolor{colabpybg} \texttt{<Text>} & TextView & UITextView & \texttt{<p>} & Muestra y anida texto con estilos. \\ \hline
+\texttt{<Image>} & ImageView & UIImageView & \texttt{<img>} & Muestra imágenes locales o remotas. \\ \hline
+\rowcolor{colabpybg} \texttt{<Scroll\allowbreak{}View>} & ScrollView & UIScrollView & \texttt{<div>} desplazable & Contenedor genérico con desplazamiento. \\ \hline
+\texttt{<Text\allowbreak{}Input>} & EditText & UITextField & \texttt{<input>} & Entrada de texto con teclado del sistema. \\ \hline
+\end{tabular}
+\end{table}
+
+Esta correspondencia explica por qué una aplicación React Native se siente propia de cada sistema: el \texttt{Switch} de la configuración es el interruptor de Android, el teclado es el del teléfono y la pila de navegación usa las transiciones nativas. A la vez, todo se describe con un solo árbol de componentes, que es lo que permite compartir el código.
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.2 Flexbox en React Native}
+\colabtitle{3.2 Flexbox en React Native}
+
+Toda la organización espacial se hace con Flexbox. Un contenedor define un \textbf{eje principal} (\texttt{flex\allowbreak{}Direction}) y distribuye a sus hijos a lo largo de él (\texttt{justify\allowbreak{}Content}) y del eje transversal (\texttt{align\allowbreak{}Items}). La documentación oficial advierte que, aunque el modelo es el de CSS, \textbf{los valores por defecto cambian} [1]:
+
+\begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
+    \item \texttt{flex\allowbreak{}Direction} vale \texttt{'column'} (en la web vale \texttt{'row'}): por eso, sin indicar nada, los hijos se apilan.
+    \item \texttt{align\allowbreak{}Content} vale \texttt{'flex-start'} en lugar de \texttt{'stretch'}.
+    \item \texttt{flex\allowbreak{}Shrink} vale \texttt{0} en lugar de \texttt{1}: un hijo no se encoge salvo que se indique.
+    \item \texttt{flex} acepta un solo número, no la forma abreviada de tres valores de CSS.
+\end{itemize}
+
+La Figura 6 reproduce, con las mismas propiedades que usa la app, los ocho patrones de layout que más se repiten en MatriLab.
+
+\begin{figure}[H]
+\centering
+\safeimage{1.0\textwidth}{img/diagramas/flexbox.png}{Patrones de layout con Flexbox utilizados en MatriLab}
+\caption{Patrones de layout con Flexbox utilizados en MatriLab}
+\label{fig:flexbox}
+\end{figure}
+
+\begin{table}[H]
+\centering\small
+\caption{Propiedades de layout más usadas y dónde se aplican}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.240\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.300\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.460\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Propiedad} & \color{white}\textbf{Valores usados} & \color{white}\textbf{Ejemplo en MatriLab} \\ \hline
+\texttt{flex\allowbreak{}Direction} & \texttt{'row'}, \texttt{'column'} & Filas icono/texto/acción; formularios en columna. \\ \hline
+\rowcolor{colabpybg} \texttt{flex} & \texttt{1} & El texto de una fila ocupa el espacio que dejan avatar e insignia. \\ \hline
+\texttt{justify\allowbreak{}Content} & \texttt{'space-between'}, \texttt{'center'} & Cabecera de tarjeta con título e insignia; botones centrados. \\ \hline
+\rowcolor{colabpybg} \texttt{align\allowbreak{}Items} / \texttt{align\allowbreak{}Self} & \texttt{'center'}, \texttt{'flex-start'}, \texttt{'stretch'} & Insignias que no se estiran; columna de datos del pase. \\ \hline
+\texttt{flex\allowbreak{}Wrap} + \texttt{gap} & \texttt{'wrap'}, 6–12 dp & Mapa de puestos del laboratorio y KPI en dos columnas. \\ \hline
+\rowcolor{colabpybg} \texttt{flex\allowbreak{}Basis} / \texttt{flex\allowbreak{}Grow} & \texttt{'47\%'}, \texttt{1} & Cada KPI ocupa media fila y absorbe el sobrante. \\ \hline
+\texttt{position} & \texttt{'absolute'} con \texttt{top/\allowbreak{}left/\allowbreak{}right/\allowbreak{}bottom} & Sello del pase, guía del escáner, bloques del horario. \\ \hline
+\rowcolor{colabpybg} \texttt{width} en porcentaje & \texttt{'50\%'} y porcentajes calculados & Datos del pase en dos columnas; relleno de la barra de ocupación. \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.3 Contenedores de organización}
+\colabtitle{3.3 Contenedores de organización}
+
+\begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
+    \item \textbf{View.} Es el bloque de construcción de toda pantalla. En MatriLab no se usa ninguna librería de componentes visuales: tarjetas, botones, chips, insignias y barras de progreso se construyeron sobre \texttt{View}, \texttt{Text} y \texttt{Pressable} (archivo \texttt{src/\allowbreak{}components/\allowbreak{}ui.\allowbreak{}tsx}).
+    \item \textbf{SafeAreaView.} Evita que el contenido quede bajo la barra de estado o la muesca. La documentación de React Native marca el \texttt{Safe\allowbreak{}Area\allowbreak{}View} del núcleo como obsoleto y recomienda \texttt{react-native-safe-area-context} [16], que funciona también en Android; la aplicación usa este último en el inicio de sesión y con \texttt{Safe\allowbreak{}Area\allowbreak{}Provider} en la raíz.
+    \item \textbf{ScrollView.} Contenedor desplazable que monta todos sus hijos a la vez [3]. Se reserva para pantallas de contenido acotado: panel del estudiante, detalle del grupo, pase QR, horario, configuración y perfil. Con \texttt{horizontal} se usa para la fila de filtros del catálogo y para el horario cuando la pantalla es angosta.
+    \item \textbf{KeyboardAvoidingView.} Ajusta el espacio cuando aparece el teclado [8]. Su comportamiento difiere por plataforma, por eso se usa \texttt{behavior=\allowbreak{}\{Platform.\allowbreak{}OS =\allowbreak{}=\allowbreak{}=\allowbreak{} 'ios' ? 'padding' : 'height'\}} en el inicio de sesión y en el escáner.
+    \item \textbf{Modal.} Presenta contenido sobre la pantalla actual [9]. Con \texttt{transparent} y \texttt{animation\allowbreak{}Type=\allowbreak{}"slide"} se construyó una hoja inferior para editar los datos de un laboratorio; \texttt{on\allowbreak{}Request\allowbreak{}Close} atiende el botón Atrás de Android.
+\end{itemize}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.4 Listas virtualizadas}
+\colabtitle{3.4 Listas virtualizadas}
+
+Cuando la cantidad de elementos crece, un \texttt{Scroll\allowbreak{}View} desperdicia memoria porque dibuja todo aunque no se vea. \texttt{Flat\allowbreak{}List} y \texttt{Section\allowbreak{}List} solo montan los elementos cercanos a la zona visible y reciclan el resto [4], [5], [18]. La Tabla 8 resume cómo se configuró cada lista.
+
+\begin{table}[H]
+\centering\small
+\caption{Configuración de las listas virtualizadas de la aplicación}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.140\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.380\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.330\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Interfaz} & \color{white}\textbf{Componente} & \color{white}\textbf{Propiedades clave} & \color{white}\textbf{Motivo} \\ \hline
+I3 Catálogo & \texttt{Section\allowbreak{}List} & \texttt{sections}, \texttt{render\allowbreak{}Section\allowbreak{}Header}, \texttt{sticky\allowbreak{}Section\allowbreak{}Headers\allowbreak{}Enabled}, \texttt{List\allowbreak{}Empty\allowbreak{}Component} & Agrupar los grupos por curso con el nombre del curso fijo arriba al desplazarse. \\ \hline
+\rowcolor{colabpybg} I7 Panel docente & \texttt{Flat\allowbreak{}List} & \texttt{List\allowbreak{}Header\allowbreak{}Component}, \texttt{Item\allowbreak{}Separator\allowbreak{}Component} & Saludo y KPI dentro de la misma lista, sin anidar listas en un \texttt{Scroll\allowbreak{}View}. \\ \hline
+I8 Nómina & \texttt{Flat\allowbreak{}List} & \texttt{sticky\allowbreak{}Header\allowbreak{}Indices=\allowbreak{}\{[0]\}}, filas de alto fijo & Resumen de asistencia y buscador siempre visibles sobre la lista de estudiantes. \\ \hline
+\rowcolor{colabpybg} I10 Laboratorios & \texttt{Flat\allowbreak{}List} & \texttt{num\allowbreak{}Columns}, \texttt{column\allowbreak{}Wrapper\allowbreak{}Style}, \texttt{key=\allowbreak{}\{columnas\}} & Rejilla de 1, 2 o 3 columnas según el ancho de la ventana. \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{notaInfo}
+\texttt{num\allowbreak{}Columns} no puede cambiar mientras la lista está montada. Por eso en I10 la propiedad \texttt{key} depende del número de columnas: al girar el teléfono React desmonta la lista y la vuelve a crear con la nueva rejilla.
+\end{notaInfo}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.5 Posicionamiento, dimensiones y adaptación}
+\colabtitle{3.5 Posicionamiento, dimensiones y adaptación}
+
+\begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
+    \item \textbf{\texttt{position: 'absolute'}} saca a un elemento del flujo y lo ubica respecto de su contenedor. \texttt{Style\allowbreak{}Sheet.\allowbreak{}absolute\allowbreak{}Fill} es el atajo para cubrirlo por completo, como hace la vista de cámara del escáner.
+    \item \textbf{Porcentajes.} \texttt{width} y \texttt{height} aceptan porcentajes del contenedor [12]; el relleno de la barra de ocupación recibe como ancho el porcentaje calculado de puestos ocupados.
+    \item \textbf{useWindowDimensions} devuelve el ancho y alto de la ventana y se actualiza solo al rotar o redimensionar [10]. Con él se calculan el ancho de cada día del horario, el tamaño del QR y las columnas de la lista de laboratorios.
+    \item \textbf{Platform} permite pequeñas diferencias por sistema (\texttt{Platform.\allowbreak{}OS}, \texttt{Platform.\allowbreak{}Version}) [11].
+    \item \textbf{StyleSheet} agrupa los estilos de cada archivo y ofrece \texttt{hairline\allowbreak{}Width}, la línea más fina que puede dibujar la pantalla, usada en bordes y separadores [6].
+    \item \textbf{useColorScheme} informa si el sistema está en modo claro u oscuro; el \texttt{Theme\allowbreak{}Context} lo usa para elegir la paleta.
+\end{itemize}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.6 Componentes de interacción y retroalimentación}
+\colabtitle{3.6 Componentes de interacción y retroalimentación}
+
+\begin{table}[H]
+\centering\small
+\caption{Componentes de interacción utilizados}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.280\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.720\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Componente o API} & \color{white}\textbf{Uso en MatriLab} \\ \hline
+\texttt{Pressable} & Base de botones, chips, tarjetas tocables y filas de la nómina. Su \texttt{style} recibe \texttt{pressed} para el efecto visual y en Android se agrega \texttt{android\_\allowbreak{}ripple} [7]. \\ \hline
+\rowcolor{colabpybg} \texttt{Text\allowbreak{}Input} & Correo y contraseña (\texttt{secure\allowbreak{}Text\allowbreak{}Entry}), buscadores, fechas de la ventana y código de verificación filtrado a hexadecimal. \\ \hline
+\texttt{Switch} & Mantener sesión, habilitar laboratorio, reglas de matrícula y avisos del perfil. \\ \hline
+\rowcolor{colabpybg} \texttt{Activity\allowbreak{}Indicator} & Indicador mientras se confirma la reserva del puesto. \\ \hline
+\texttt{Refresh\allowbreak{}Control} & Gesto de deslizar hacia abajo para actualizar el panel del estudiante. \\ \hline
+\rowcolor{colabpybg} \texttt{Alert} & Diálogo nativo para confirmar la anulación de una matrícula y avisar cambios guardados. \\ \hline
+\texttt{Share} & Hoja nativa de compartir para el pase y para la nómina en CSV. \\ \hline
+\rowcolor{colabpybg} \texttt{Image} & Logotipo de la EPIS en el inicio de sesión con \texttt{resize\allowbreak{}Mode=\allowbreak{}"contain"}. \\ \hline
+\texttt{Status\allowbreak{}Bar} (expo-status-bar) & Texto claro u oscuro de la barra de estado según el fondo de la pantalla. \\ \hline
+\rowcolor{colabpybg} \texttt{Camera\allowbreak{}View} (expo-camera) & Vista previa de la cámara con lectura de códigos QR (\texttt{barcode\allowbreak{}Scanner\allowbreak{}Settings}) [19]. \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.7 Navegación nativa}
+\colabtitle{3.7 Navegación nativa}
+
+React Native no incluye un navegador en su núcleo; se usó \textbf{React Navigation} [20], [21]. \texttt{create\allowbreak{}Native\allowbreak{}Stack\allowbreak{}Navigator} delega la pila en los componentes nativos (fragmentos en Android y \texttt{UINavigation\allowbreak{}Controller} en iOS), por lo que las transiciones y el gesto de volver son los del sistema. \texttt{presentation: 'modal'} presenta el detalle del grupo como una hoja. \texttt{create\allowbreak{}Bottom\allowbreak{}Tab\allowbreak{}Navigator} genera la barra de pestañas de cada rol; sus íconos cambian entre la versión rellena y la de contorno según la pestaña activa.
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{3.8 Catálogo de componentes por interfaz}
+\colabtitle{3.8 Catálogo de componentes por interfaz}
+
+\begin{table}[H]
+\centering\small
+\caption{Componentes de React Native utilizados en cada interfaz}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.220\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.430\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.350\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Interfaz} & \color{white}\textbf{Componentes de organización y layout} & \color{white}\textbf{Componentes de interacción} \\ \hline
+I1 Inicio de sesión & SafeAreaView, KeyboardAvoidingView, ScrollView, View (maxWidth) & TextInput, Pressable, Switch, Image, StatusBar \\ \hline
+\rowcolor{colabpybg} I2 Panel del estudiante & ScrollView, View con flexWrap y flexBasis & RefreshControl, Pressable, Alert \\ \hline
+I3 Catálogo & SectionList, ScrollView horizontal & TextInput, Pressable (chips y tarjetas) \\ \hline
+\rowcolor{colabpybg} I4 Detalle del grupo & ScrollView, View con flexWrap, pie fijo & Pressable, ActivityIndicator \\ \hline
+I5 Pase QR & ScrollView, position absolute, width 50 \% & QRCode (SVG), Share \\ \hline
+\rowcolor{colabpybg} I6 Horario & ScrollView (vertical y horizontal), position absolute, useWindowDimensions & Pressable (chips) \\ \hline
+I7 Panel docente & FlatList con ListHeaderComponent & Pressable \\ \hline
+\rowcolor{colabpybg} I8 Nómina & FlatList con stickyHeaderIndices & TextInput, Pressable (checkbox), Share \\ \hline
+I9 Escáner & KeyboardAvoidingView, ScrollView, absoluteFill & CameraView, TextInput \\ \hline
+\rowcolor{colabpybg} I10 Laboratorios & FlatList con numColumns, Modal & Pressable (stepper), Switch, TextInput \\ \hline
+I11 Matrícula & ScrollView, filas space-between & TextInput, Switch, Alert \\ \hline
+\rowcolor{colabpybg} I12 Perfil & ScrollView, filas de ajustes & Pressable, Switch, Platform, useWindowDimensions \\ \hline
+\end{tabular}
+\end{table}
+

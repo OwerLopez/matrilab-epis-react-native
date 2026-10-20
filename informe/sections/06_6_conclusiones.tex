@@ -1,0 +1,12 @@
+\clearpage
+\seccionInforme{6. Conclusiones}
+\phantomsection\addcontentsline{toc}{section}{6. Conclusiones}
+
+\begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
+    \item Se desarrolló MatriLab EPIS con React Native 0.88 y Expo SDK 58: doce interfaces para tres roles que se ejecutan como aplicación nativa en Android y como aplicación web con el mismo código, usando solo componentes del núcleo del framework para la organización de la interfaz.
+    \item El árbol de problemas y el árbol de objetivos permitieron justificar cada pantalla: los cinco medios fundamentales se tradujeron en trece funcionalidades y estas en las doce interfaces, con trazabilidad explícita (Tabla 4).
+    \item La investigación de componentes mostró que el layout en React Native descansa en Flexbox con valores por defecto distintos a los de la web, en listas virtualizadas para colecciones grandes y en \texttt{position: 'absolute'} y \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} para superposiciones y adaptación. La rejilla de laboratorios pasó de una a dos columnas al girar la pantalla sin código adicional.
+    \item Separar el dominio en funciones puras permitió verificar las reglas de negocio con 31 pruebas que cubren el 100 \% de las líneas del dominio, y el recorrido automatizado por accesibilidad sirvió como prueba de humo de la navegación completa en Android.
+    \item Frente a FlutterFlow (LAB 02), React Native exige escribir más código, pero da control total sobre el layout y el estado y produce interfaces que usan los controles nativos de cada sistema; el costo principal es mantener la compatibilidad de versiones del ecosistema.
+\end{itemize}
+

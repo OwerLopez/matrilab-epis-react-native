@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="comun.css">
+<style>
+  .lienzo { width: 1500px; }
+  .hoja { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px 26px; justify-items: center; }
+  .solo .lienzo { width: 520px; padding: 20px; }
+  .solo .titulo, .solo .subtitulo { display: none; }
+  figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  figcaption { font-size: 16px; font-weight: 700; color: var(--azul); }
+  .tel { width: 360px; height: 800px; border: 3px solid #2B3D52; border-radius: 34px; overflow: hidden; background: #F3F4F6; display: flex; flex-direction: column; position: relative; }
+  .estado { height: 26px; background: #D9DDE3; flex: none; }
+  .barra { height: 52px; background: #fff; border-bottom: 1.5px solid #C9CFD8; display: flex; align-items: center; padding: 0 16px; gap: 10px; font-weight: 700; font-size: 16px; flex: none; }
+  .cuerpo { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow: hidden; position: relative; }
+  .tabs { height: 60px; background: #fff; border-top: 1.5px solid #C9CFD8; display: flex; flex: none; }
+  .tabs div { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 11px; color: #7A8796; }
+  .tabs div::before { content: ""; width: 20px; height: 20px; border-radius: 6px; background: #C9CFD8; }
+  .tabs .act { color: #2B3D52; font-weight: 700; }
+  .tabs .act::before { background: #2B3D52; }
+  .b { border: 1.5px solid #B8C0CB; background: #fff; border-radius: 10px; padding: 8px; position: relative; display: flex; flex-direction: column; gap: 6px; }
+  .g { background: #E4E7EC; border-color: #E4E7EC; }
+  .osc { background: #6B7686; border-color: #6B7686; color: #fff; }
+  .r { flex-direction: row; align-items: center; }
+  .l { height: 9px; border-radius: 5px; background: #C9CFD8; }
+  .l.o { background: #8D97A5; }
+  .btn { height: 40px; border-radius: 9px; background: #2B3D52; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .btn.s { background: #E4E7EC; color: #2B3D52; }
+  .cir { width: 40px; height: 40px; border-radius: 50%; background: #9AA4B2; flex: none; }
+  .ico { width: 20px; height: 20px; border-radius: 5px; background: #9AA4B2; flex: none; }
+  .chip { height: 26px; border-radius: 13px; border: 1.5px solid #9AA4B2; padding: 0 12px; font-size: 11px; display: flex; align-items: center; flex: none; }
+  .chip.a { background: #2B3D52; color: #fff; border-color: #2B3D52; }
+  .rn { position: absolute; top: -9px; right: 6px; font-family: Consolas, monospace; font-size: 10.5px; font-weight: 700; color: #C3141E; background: #fff; border: 1.2px solid #C3141E; border-radius: 5px; padding: 0 4px; line-height: 15px; z-index: 2; white-space: nowrap; }
+  .rn.izq { right: auto; left: 6px; }
+  .zona { border: 1.6px dashed #C3141E; border-radius: 10px; padding: 10px 6px 6px; position: relative; display: flex; flex-direction: column; gap: 8px; }
+  .zona.r { flex-direction: row; }
+  .t { font-size: 12px; color: #4A5868; }
+  .k { flex: 1 1 45%; height: 70px; }
+</style>
+</head>
+<body>
+<div class="lienzo" id="lienzo">
+  <h1 class="titulo" id="titulo"></h1>
+  <p class="subtitulo" id="sub"></p>
+  <div class="hoja" id="hoja"></div>
+</div>
+<script>
+const L = (w = 100, o = false) => `<div class="l${o ? ' o' : ''}" style="width:${w}%"></div>`;
+const rn = (t, izq) => `<span class="rn${izq ? ' izq' : ''}">${t}</span>`;
+const tabs = (n, a) => `<div class="tabs">${n.map((x, i) => `<div class="${i === a ? 'act' : ''}">${x}</div>`).join('')}</div>`;
+const TE = ['Inicio', 'Catálogo', 'Horario', 'Perfil'];
+const TD = ['Panel', 'Escáner', 'Perfil'];
+const TA = ['Laboratorios', 'Matrícula', 'Perfil'];
+const barra = (t, extra = '') => `<div class="barra">${extra}${t}</div>`;
+const tarjeta = (cont, cls = '', tag = 'Tarjeta (View)') => `<div class="b ${cls}">${tag ? rn(tag) : ''}${cont}</div>`;
+
+const M = {
+  login: ['I1 · Inicio de sesión', `
+    <div class="cuerpo" style="background:#6B7686; justify-content:center">
+      <div class="zona" style="border-color:#fff">${rn('KeyboardAvoidingView + ScrollView', true)}
+        <div style="text-align:center; color:#fff; font-weight:800; font-size:22px">MatriLab</div>
+        <div class="b" style="gap:8px">${rn('View maxWidth 440')}
+          <div class="g" style="height:40px; border-radius:8px; margin:6px 50px"></div>
+          ${L(60, true)}${L(80)}
+          <div class="b r" style="height:42px">${rn('TextInput')}<div class="ico"></div>${L(70)}</div>
+          <div class="b r" style="height:42px">${rn('TextInput secure')}<div class="ico"></div>${L(50)}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; position:relative">${L(55)}<div style="width:40px;height:22px;border-radius:11px;background:#2B3D52"></div><span class="rn" style="top:-14px; right:0">Switch</span></div>
+          <div class="btn" style="background:#C3141E; position:relative">Ingresar${rn('Pressable')}</div>
+          <div class="zona r" style="gap:6px">${rn('View row · flex: 1')}<div class="btn s" style="flex:1">Est.</div><div class="btn s" style="flex:1">Doc.</div><div class="btn s" style="flex:1">Adm.</div></div>
+        </div>
+      </div>
+    </div>`],
+  dashboard: ['I2 · Panel del estudiante', `${barra('MatriLab')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView + RefreshControl</span>
+      <div class="zona r" style="align-items:center; margin-top:10px">${rn('View row')}<div class="cir"></div><div style="flex:1; display:flex; flex-direction:column; gap:6px">${L(70)}${L(45, true)}</div><div class="ico"></div></div>
+      ${tarjeta(`<div style="display:flex; justify-content:space-between; align-items:center"><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(50)}${L(80)}</div><div class="ico" style="background:#fff"></div></div>`, 'osc', 'Tarjeta row')}
+      <div class="zona r" style="flex-wrap:wrap; gap:8px">${rn('View row · flexWrap · flexBasis 47%')}<div class="b k"></div><div class="b k"></div><div class="b k"></div><div class="b k"></div></div>
+      <div style="display:flex; justify-content:space-between">${L(40, true)}${L(20)}</div>
+      ${tarjeta(`<div style="display:flex;gap:8px"><div style="width:5px;background:#9AA4B2;border-radius:3px"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(80, true)}${L(55)}<div style="display:flex;gap:6px"><div class="btn" style="flex:1">Ver pase QR</div><div class="btn s" style="width:80px">Anular</div></div></div></div>`, '', 'franja + flex: 1')}
+    </div>${tabs(TE, 0)}`],
+  catalogo: ['I3 · Catálogo de grupos', `${barra('Catálogo de laboratorios')}
+    <div class="b" style="border-radius:0; border-width:0 0 1.5px 0; padding:10px 12px; gap:8px">
+      <div class="b r" style="height:38px">${rn('TextInput')}<div class="ico"></div>${L(60)}</div>
+      <div class="zona r" style="gap:6px; margin-top:6px">${rn('ScrollView horizontal')}<div class="chip a">Todos</div><div class="chip">Con vacantes</div><div class="chip">Sin cruce</div></div>
+    </div>
+    <div class="cuerpo"><span class="rn izq" style="top:2px">SectionList (stickySectionHeaders)</span>
+      <div style="display:flex;gap:6px;align-items:center;margin-top:12px; position:relative"><div style="width:10px;height:10px;border-radius:5px;background:#8D97A5"></div>${L(50, true)}<span class="rn" style="top:-6px">renderSectionHeader</span></div>
+      ${[1, 2].map(() => tarjeta(`<div style="display:flex;gap:8px;align-items:center"><div class="g" style="width:40px;height:40px;border-radius:9px"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(70, true)}${L(85)}</div><div class="chip">semáforo</div></div><div class="l" style="height:8px"><div class="l o" style="width:70%;height:8px"></div></div>${L(35)}`, '', 'Pressable · renderItem')).join('')}
+      <div style="display:flex;gap:6px;align-items:center"><div style="width:10px;height:10px;border-radius:5px;background:#8D97A5"></div>${L(40, true)}</div>
+      ${tarjeta(`<div style="display:flex;gap:8px;align-items:center"><div class="g" style="width:40px;height:40px;border-radius:9px"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(70, true)}${L(85)}</div><div class="chip">semáforo</div></div><div class="l"></div>`, '', '')}
+    </div>${tabs(TE, 1)}`],
+  detalle: ['I4 · Detalle del grupo (modal)', `${barra('Detalle del grupo')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView</span>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:12px">${L(35)}${L(80, true)}<div style="display:flex;gap:6px"><div class="chip">Grupo B</div><div class="chip">Disponible</div></div></div>
+      ${tarjeta(`${[1, 2, 3, 4].map(() => `<div style="display:flex;gap:8px;align-items:center"><div class="ico"></div><div class="l o" style="width:60px"></div>${L(55)}</div>`).join('')}`, '', 'filas icono / etiqueta / valor')}
+      ${tarjeta(`<div style="display:flex;justify-content:space-between">${L(45, true)}${L(15)}</div><div style="display:flex;flex-wrap:wrap;gap:4px">${Array.from({ length: 25 }, (_, i) => `<div style="width:38px;height:28px;border-radius:5px;border:1.4px solid ${i < 19 ? '#6B7686' : '#B8C0CB'};background:${i < 19 ? '#C9CFD8' : '#fff'}"></div>`).join('')}</div>`, '', 'mapa de PC · flexWrap')}
+      <div class="b g r" style="gap:8px">${rn('aviso de validación (RN-02)')}<div class="ico"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(60, true)}${L(90)}</div></div>
+    </div>
+    <div class="b" style="border-radius:0;border-width:1.5px 0 0 0;padding:12px">${rn('pie fijo fuera del ScrollView')}<div class="btn" style="background:#C3141E">Confirmar matrícula</div></div>`],
+  ficha: ['I5 · Pase de laboratorio QR', `${barra('‹  Mi pase de laboratorio')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView</span>
+      <div class="b" style="padding:0; overflow:visible; margin-top:12px; gap:0">${rn('View overflow hidden')}
+        <div class="osc" style="padding:14px; border-radius:10px 10px 0 0; display:flex; flex-direction:column; gap:6px; position:relative">${L(40)}${L(70)}${L(55)}<div class="chip" style="position:absolute; top:12px; right:10px; background:#fff; color:#2B3D52">Confirmada</div><span class="rn" style="top:40px; right:8px">position absolute</span></div>
+        <div style="height:22px; position:relative; display:flex; align-items:center"><div style="position:absolute;left:-11px;width:22px;height:22px;border-radius:11px;background:#F3F4F6"></div><div style="flex:1;margin:0 18px;border-top:2px dashed #B8C0CB"></div><div style="position:absolute;right:-11px;width:22px;height:22px;border-radius:11px;background:#F3F4F6"></div></div>
+        <div style="padding:10px 14px 14px; display:flex; flex-direction:column; align-items:center; gap:8px; position:relative">
+          <div style="width:170px;height:170px;border:1.5px solid #B8C0CB;border-radius:8px;background:repeating-conic-gradient(#6B7686 0 25%, #fff 0 50%) 0 0/24px 24px; position:relative">${rn('QRCode (react-native-svg)')}</div>
+          ${L(35)}<div class="l o" style="width:50%;height:16px"></div>
+          <div class="zona r" style="flex-wrap:wrap; width:100%; gap:8px 0">${rn('row · flexWrap · width 50%')}${[1, 2, 3, 4].map(() => `<div style="width:50%;display:flex;flex-direction:column;gap:4px;padding-right:6px">${L(40)}${L(80, true)}</div>`).join('')}</div>
+        </div>
+      </div>
+      <div class="btn s" style="position:relative">Compartir pase${rn('Share API')}</div>
+    </div>`],
+  horario: ['I6 · Horario semanal', `${barra('Mi horario')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView</span>
+      <div style="display:flex;gap:6px;margin-top:12px; position:relative"><div class="chip a">Semana</div><div class="chip">Lista</div><span class="rn" style="top:-4px">Chip (Pressable)</span></div>
+      ${tarjeta(`<div style="display:flex; height:470px; position:relative"><div style="width:30px;display:flex;flex-direction:column;justify-content:space-between;padding-top:20px">${Array.from({ length: 9 }, () => `<div class="l" style="width:24px;height:6px"></div>`).join('')}</div>${['L', 'M', 'X', 'J', 'V'].map((d, i) => `<div style="flex:1;border-left:1px solid #C9CFD8;position:relative"><div class="t" style="text-align:center;height:20px">${d}</div>${[[0, 70, 1], [100, 60, 0], [230, 70, 1]].filter((_, k) => (i + k) % 2 === 0).map(([top, h, lab]) => `<div style="position:absolute;left:3px;right:3px;top:${top + 30 + i * 18}px;height:${h}px;border-radius:5px;${lab ? 'background:#6B7686' : 'border:1.5px dashed #6B7686;background:#fff'}"></div>`).join('')}</div>`).join('')}<span class="rn" style="top:150px; right:4px">bloques position absolute</span></div>`, '', 'useWindowDimensions → ancho por día')}
+      <div style="display:flex;gap:8px;align-items:center"><div style="width:16px;height:12px;background:#6B7686;border-radius:3px"></div>${L(30)}<div style="width:16px;height:12px;border:1.5px dashed #6B7686;border-radius:3px"></div>${L(15)}</div>
+    </div>${tabs(TE, 2)}`],
+  panel: ['I7 · Panel docente', `${barra('Panel docente')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">FlatList + ListHeaderComponent</span>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px"><div class="cir"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(45)}${L(75, true)}</div></div>
+      <div class="zona r" style="flex-wrap:wrap;gap:8px">${rn('Kpi × 4 · flexWrap')}<div class="b k"></div><div class="b k"></div><div class="b k"></div><div class="b k"></div></div>
+      <div class="btn" style="background:#C3141E">Escanear pase de un estudiante</div>
+      ${L(50, true)}
+      ${[1, 2].map(() => tarjeta(`<div style="display:flex;justify-content:space-between;align-items:center"><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(80, true)}${L(60)}</div><div class="chip">semáforo</div></div><div class="l"><div class="l o" style="width:76%"></div></div><div style="display:flex;justify-content:space-between;align-items:center">${L(45)}<div class="btn s" style="width:90px;height:32px">Nómina</div></div>`, '', 'renderItem')).join('')}
+    </div>${tabs(TD, 0)}`],
+  nomina: ['I8 · Nómina y asistencia', `${barra('‹  PE · Grupo B')}
+    <div class="b" style="border-radius:0;border-width:0 0 1.5px 0;padding:12px;gap:8px">${rn('cabecera fija · stickyHeaderIndices [0]')}
+      ${L(70)}<div style="display:flex;gap:8px;align-items:flex-end"><div class="l o" style="width:70px;height:24px"></div>${L(45)}</div><div class="l"><div class="l o" style="width:20%"></div></div>
+      <div class="b r" style="height:34px"><div class="ico"></div>${L(50)}</div>
+    </div>
+    <div class="cuerpo" style="padding:0;gap:0"><span class="rn izq" style="top:4px">FlatList · filas Pressable de altura fija</span>
+      ${Array.from({ length: 8 }, (_, i) => `<div style="height:58px;border-bottom:1px solid #C9CFD8;display:flex;align-items:center;gap:10px;padding:0 14px;background:#fff;${i === 0 ? 'margin-top:22px' : ''}"><div class="l" style="width:16px"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(75, true)}${L(45)}</div><div class="chip ${i < 2 ? 'a' : ''}">${i < 2 ? '07:05' : 'Pendiente'}</div></div>`).join('')}
+    </div>
+    <div class="b" style="border-radius:0;border-width:1.5px 0 0 0;padding:12px;flex-direction:row;gap:8px">${rn('pie · Share (CSV)')}<div class="btn s" style="flex:1">Exportar CSV</div><div class="btn" style="flex:1">Escanear</div></div>`],
+  escaner: ['I9 · Escáner de asistencia', `${barra('Registrar asistencia')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">KeyboardAvoidingView + ScrollView</span>
+      <div style="height:300px;border-radius:14px;background:#2B3D52;position:relative;margin-top:20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px">${rn('CameraView · absoluteFill')}
+        <div style="width:150px;height:150px;position:relative">${['top:0;left:0;border-width:4px 0 0 4px', 'top:0;right:0;border-width:4px 4px 0 0', 'bottom:0;left:0;border-width:0 0 4px 4px', 'bottom:0;right:0;border-width:0 4px 4px 0'].map((s) => `<div style="position:absolute;width:30px;height:30px;border-style:solid;border-color:#fff;${s}"></div>`).join('')}</div>
+        <div class="chip" style="color:#fff;border-color:#fff">Encuadra el código QR</div><span class="rn" style="top:auto;bottom:8px">capa absolute · pointerEvents none</span></div>
+      <div class="b g r" style="gap:8px">${rn('resultado')}<div class="cir" style="width:30px;height:30px"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(55, true)}${L(80)}</div></div>
+      ${tarjeta(`${L(40, true)}${L(90)}${L(70)}<div class="b" style="height:44px;align-items:center;justify-content:center">${rn('TextInput · solo hex')}<div class="l o" style="width:50%"></div></div><div class="btn">Validar código</div>`, '', 'Ingreso manual')}
+    </div>${tabs(TD, 1)}`],
+  laboratorios: ['I10 · Gestión de laboratorios', `${barra('Laboratorios')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">FlatList · numColumns según ancho</span>
+      <div class="b osc r" style="gap:10px;margin-top:12px">${rn('ListHeaderComponent')}<div class="ico" style="background:#fff"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="l" style="width:40%;height:16px;background:#fff"></div>${L(70)}</div></div>
+      ${[1, 2].map(() => tarjeta(`<div style="display:flex;justify-content:space-between;align-items:center">${L(45, true)}<div class="chip">Operativo</div></div>${L(70)}${L(55)}<div style="display:flex;justify-content:space-between;align-items:center;position:relative">${L(35)}<div style="display:flex;gap:6px;align-items:center"><div class="b" style="width:28px;height:28px;padding:0"></div><div class="l o" style="width:18px"></div><div class="b" style="width:28px;height:28px;padding:0"></div></div><span class="rn" style="top:-14px;right:0">Stepper</span></div><div class="l"><div class="l o" style="width:80%"></div></div><div style="display:flex;justify-content:space-between;align-items:center">${L(50)}<div style="width:40px;height:22px;border-radius:11px;background:#2B3D52"></div></div><div class="btn s">Editar datos</div>`, '', 'renderItem')).join('')}
+      <div class="b" style="position:absolute;left:0;right:0;bottom:0;border-radius:18px 18px 0 0;padding:12px;gap:8px;box-shadow:0 -4px 10px rgba(0,0,0,.15)">${rn('Modal transparent · hoja inferior')}<div style="width:40px;height:4px;border-radius:2px;background:#B8C0CB;align-self:center"></div>${L(50, true)}<div class="b" style="height:32px"></div><div style="display:flex;gap:8px"><div class="btn s" style="flex:1">Cancelar</div><div class="btn" style="flex:1">Guardar</div></div></div>
+    </div>${tabs(TA, 0)}`],
+  configuracion: ['I11 · Configuración de matrícula', `${barra('Configurar matrícula')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView</span>
+      ${tarjeta(`<div style="display:flex;gap:8px;align-items:center"><div class="ico"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(50, true)}${L(80)}</div></div>`, 'g', 'estado de la ventana')}
+      ${L(45, true)}
+      ${tarjeta(`${L(25)}<div class="b r" style="height:38px"><div class="ico"></div>${L(55)}</div>${L(25)}<div class="b r" style="height:38px"><div class="ico"></div>${L(55)}</div><div style="display:flex;justify-content:space-between;align-items:center"><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(60, true)}${L(40)}</div><div class="b" style="width:46px;height:38px"></div></div>`, '', 'TextInput · validación de fechas')}
+      ${L(25, true)}
+      ${tarjeta(`${[1, 2].map(() => `<div style="display:flex;justify-content:space-between;align-items:center"><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(60, true)}${L(80)}</div><div style="width:40px;height:22px;border-radius:11px;background:#2B3D52"></div></div>`).join('')}`, '', 'row · space-between · Switch')}
+      <div class="btn" style="background:#C3141E">Guardar configuración</div>
+      ${tarjeta(`<div style="display:flex;justify-content:space-between">${L(55, true)}<div class="chip">Agotado</div></div>`, '', 'grupos agotados (map)')}
+    </div>${tabs(TA, 1)}`],
+  perfil: ['I12 · Perfil y ajustes', `${barra('Perfil')}
+    <div class="cuerpo"><span class="rn izq" style="top:2px">ScrollView</span>
+      ${tarjeta(`<div style="display:flex;gap:10px;align-items:center"><div class="cir" style="width:56px;height:56px"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px">${L(80, true)}${L(65)}${L(45)}</div></div>`, '', 'Avatar + texto')}
+      ${L(30, true)}
+      ${tarjeta(`${L(40)}<div style="display:flex;gap:6px;flex-wrap:wrap"><div class="chip">Sistema</div><div class="chip a">Claro</div><div class="chip">Oscuro</div></div>`, '', 'Chip · tema (useColorScheme)')}
+      ${L(35, true)}
+      ${tarjeta(`${[1, 2].map(() => `<div style="display:flex;gap:8px;align-items:center;border-bottom:1px solid #C9CFD8;padding-bottom:6px"><div class="ico"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(60, true)}${L(80)}</div><div style="width:40px;height:22px;border-radius:11px;background:#2B3D52"></div></div>`).join('')}`, '', 'FilaAjuste + Switch')}
+      ${L(30, true)}
+      ${tarjeta(`${[1, 2, 3].map(() => `<div style="display:flex;gap:8px;align-items:center"><div class="ico"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px">${L(40, true)}${L(75)}</div></div>`).join('')}`, '', 'Platform · useWindowDimensions')}
+      <div class="btn s">Cerrar sesión</div>
+    </div>${tabs(TE, 3)}`],
+};
+
+const q = new URLSearchParams(location.search);
+const solo = q.get('solo');
+const hoja = q.get('hoja') || '1';
+const claves = solo ? [solo] : hoja === '1' ? ['login', 'dashboard', 'catalogo', 'detalle', 'ficha', 'horario'] : ['panel', 'nomina', 'escaner', 'laboratorios', 'configuracion', 'perfil'];
+if (solo) document.body.classList.add('solo');
+document.getElementById('titulo').textContent = hoja === '1' ? 'Mockups de baja fidelidad · Rol estudiante' : 'Mockups de baja fidelidad · Roles docente y administración';
+document.getElementById('sub').textContent = 'Las etiquetas rojas indican el componente de React Native previsto para cada región; los recuadros discontinuos marcan contenedores de layout.';
+document.getElementById('hoja').innerHTML = claves.map((k) => `<figure><div class="tel"><div class="estado"></div>${M[k][1]}</div>${solo ? '' : `<figcaption>${M[k][0]}</figcaption>`}</figure>`).join('');
+if (solo) document.getElementById('hoja').style.display = 'block';
+document.body.dataset.listo = '1';
+</script>
+</body>
+</html>

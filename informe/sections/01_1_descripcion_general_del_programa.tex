@@ -1,0 +1,112 @@
+\seccionInforme{1. Descripción general del programa}
+\phantomsection\addcontentsline{toc}{section}{1. Descripción general del programa}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.1 Contexto y propósito}
+\colabtitle{1.1 Contexto y propósito}
+
+\textbf{MatriLab EPIS} es una aplicación móvil para gestionar la matrícula en los grupos de laboratorio de la Escuela Profesional de Ingeniería de Sistemas de la UNSA. Es el mismo dominio que el equipo trabajó en el LAB 01 (selección de herramienta y requisitos) y en el LAB 02 (prototipo RMAD en FlutterFlow). En esta práctica la aplicación se reconstruye desde cero con un \textbf{framework multiplataforma}, \textbf{React Native}, usando únicamente los componentes propios de la plataforma para organizar cada interfaz.
+
+El programa atiende a tres tipos de usuario. El \textbf{estudiante} consulta la oferta de grupos con un semáforo de vacantes, se matricula sin cruces de horario y obtiene un pase digital con código QR. El \textbf{docente o jefe de prácticas} revisa la nómina de sus grupos y registra la asistencia leyendo el QR con la cámara del teléfono. La \textbf{coordinación de laboratorios} define la capacidad de cada ambiente y la ventana de matrícula. Todas las pantallas comparten un mismo código TypeScript que se ejecuta como aplicación nativa en Android y como aplicación web.
+
+Los datos de esta versión son de demostración y viven en memoria: el objetivo de la práctica es el diseño y la organización de las interfaces con los componentes del framework, no la persistencia. Aun así, las reglas de negocio (cruce de horarios, aforo, ventana de matrícula y verificación del pase) son reales, están aisladas en un módulo de dominio y se verifican con pruebas automatizadas.
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.2 Árbol de problemas}
+\colabtitle{1.2 Árbol de problemas}
+
+El diseño parte del diagnóstico realizado en el LAB 01 sobre el proceso de matrícula de laboratorios. Para ordenarlo se aplicó la técnica del árbol de problemas de la metodología del marco lógico [17]: se identificó un problema central, sus causas directas e indirectas y los efectos que produce. La Figura 1 muestra el resultado.
+
+\begin{figure}[H]
+\centering
+\safeimage{1.0\textwidth}{img/diagramas/arbol_problemas.png}{Árbol de problemas del proceso de matrícula de laboratorios de la EPIS-UNSA}
+\caption{Árbol de problemas del proceso de matrícula de laboratorios de la EPIS-UNSA}
+\label{fig:arbol_problemas}
+\end{figure}
+
+El problema central es que \textbf{la matrícula en los laboratorios es lenta, poco transparente y genera sobrecupos y cruces de horario}. Las cinco causas directas se explican por causas más profundas: las vacantes se publican en listas que no se actualizan en tiempo real, nadie contrasta el grupo práctico con la teoría ya inscrita, las inscripciones simultáneas no se procesan como una operación atómica, no existe una constancia digital verificable y la información de cada sala se coordina por correo. Los efectos llegan hasta el aula: estudiantes rechazados al final del trámite, permutas cuando las clases ya empezaron, salas con más estudiantes que computadoras y nóminas que el docente recibe semanas tarde.
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.3 Árbol de objetivos y alcance}
+\colabtitle{1.3 Árbol de objetivos y alcance}
+
+Cada condición negativa se convirtió en la situación deseada correspondiente (Figura 2). Los \textbf{medios fundamentales}, en la base del árbol, son las acciones concretas que el software puede ejecutar; por eso se tomaron como origen de las funcionalidades. En la misma figura, debajo de cada medio, se indican las interfaces de MatriLab que lo implementan.
+
+\begin{figure}[H]
+\centering
+\safeimage{1.0\textwidth}{img/diagramas/arbol_objetivos.png}{Árbol de objetivos: los medios fundamentales se traducen en interfaces de MatriLab}
+\caption{Árbol de objetivos: los medios fundamentales se traducen en interfaces de MatriLab}
+\label{fig:arbol_objetivos}
+\end{figure}
+
+El alcance de esta práctica cubre los cinco medios con \textbf{doce interfaces} (I1 a I12). Quedan fuera la autenticación real contra Google Workspace y la persistencia en la nube, que en el LAB 02 se resolvieron con Firebase; aquí se simulan con un inicio de sesión de demostración y un almacén de estado local, de modo que la aplicación funciona sin conexión y cualquier evaluador puede probarla.
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.4 Actores y roles}
+\colabtitle{1.4 Actores y roles}
+
+\begin{table}[H]
+\centering\small
+\caption{Actores del sistema y lo que cada uno puede hacer en la aplicación}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.170\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.220\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.460\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Rol} & \color{white}\textbf{Cuenta de demostración} & \color{white}\textbf{Responsabilidades en MatriLab} & \color{white}\textbf{Interfaces} \\ \hline
+Estudiante & Lopez Arela, Ower Frank · CUI 20213412 & Consultar la oferta, matricularse sin cruces, ver su horario, mostrar su pase QR y anular una matrícula dentro de la ventana. & I1–I6, I12 \\ \hline
+\rowcolor{colabpybg} Docente / jefe de prácticas & Mg. Carla Medina Rojas (ficticia) & Revisar la ocupación de sus grupos, consultar la nómina, registrar asistencia con QR o código manual y exportar la nómina. & I1, I7–I9, I12 \\ \hline
+Coordinación de laboratorios & \texttt{laboratorios.\allowbreak{}epis@unsa.\allowbreak{}edu.\allowbreak{}pe} & Ajustar capacidad y estado de cada ambiente, definir la ventana de matrícula y revisar los grupos agotados. & I1, I10–I12 \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.5 Requisitos funcionales atendidos}
+\colabtitle{1.5 Requisitos funcionales atendidos}
+
+La Tabla 2 relaciona los requisitos funcionales formulados en el LAB 01 con la interfaz y el mecanismo que los resuelve en esta versión.
+
+\begin{table}[H]
+\centering\small
+\caption{Requisitos funcionales del LAB 01 y cómo se resuelven en la aplicación React Native}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.090\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.230\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.530\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.150\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Código} & \color{white}\textbf{Requisito} & \color{white}\textbf{Cómo se resuelve} & \color{white}\textbf{Interfaz} \\ \hline
+RF-01 & Autenticación institucional & Validación del dominio \texttt{@unsa.\allowbreak{}edu.\allowbreak{}pe} y de la contraseña; acceso de demostración por rol. & I1 \\ \hline
+\rowcolor{colabpybg} RF-02 & Catálogo de cursos y grupos & \texttt{Section\allowbreak{}List} agrupada por curso con buscador y filtros. & I3 \\ \hline
+RF-03 & Vacantes en vivo & Semáforo y barra de ocupación derivados del estado global; se recalculan al matricular o anular. & I2, I3, I4 \\ \hline
+\rowcolor{colabpybg} RF-04 & Validación anti-cruces & \texttt{validar\allowbreak{}Matricula} contrasta el grupo con los laboratorios y la teoría inscritos (RN-02). & I4 \\ \hline
+RF-05 & Reserva atómica & \texttt{reservar\allowbreak{}Cupo} dentro del reductor: el cupo se descuenta y la matrícula se registra en una sola transición. & I4 \\ \hline
+\rowcolor{colabpybg} RF-06 & Ficha digital con QR & \texttt{react-native-qrcode-svg} con contenido firmado por una huella FNV-1a. & I5 \\ \hline
+RF-07 & Horario consolidado y nómina & Cuadrícula semanal con bloques posicionados y nómina virtualizada. & I6, I7, I8 \\ \hline
+\rowcolor{colabpybg} RF-08 & Asistencia por escaneo QR & \texttt{Camera\allowbreak{}View} de \texttt{expo-camera} con lector de códigos QR y verificación del pase. & I9 \\ \hline
+RF-09 & Parametrización de laboratorios & Capacidad con \textit{stepper}, estado con \texttt{Switch} y edición en \texttt{Modal}; ventana de matrícula validada. & I10, I11 \\ \hline
+\rowcolor{colabpybg} RF-10 & Exportación de nóminas & CSV con separador punto y coma compartido con la API \texttt{Share}. & I8 \\ \hline
+\end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+\phantomsection\addcontentsline{toc}{subsection}{1.6 Elección del framework}
+\colabtitle{1.6 Elección del framework}
+
+La guía permite Flutter, React Native o Xamarin. El equipo eligió \textbf{React Native con Expo} por tres razones verificables. Primero, React Native dibuja la interfaz con \textbf{vistas nativas} de cada sistema operativo: un \texttt{<View>} es un \texttt{View\allowbreak{}Group} en Android y un \texttt{UIView} en iOS [2], lo que responde de forma directa al requisito de usar los componentes propios de la plataforma. Segundo, el LAB 02 ya se había construido sobre Flutter mediante FlutterFlow; usar otro framework permite comparar ambos enfoques con evidencia propia. Tercero, Expo [14] permite ejecutar la aplicación en un teléfono o emulador con Expo Go sin compilar proyectos nativos, y exportarla a la web con el mismo código.
+
+\begin{table}[H]
+\centering\small
+\caption{Versiones de la pila tecnológica utilizada}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.300\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.180\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.520\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Componente} & \color{white}\textbf{Versión} & \color{white}\textbf{Uso en el proyecto} \\ \hline
+React Native & 0.88.0 & Framework multiplataforma; Nueva Arquitectura (Fabric, JSI) y motor Hermes. \\ \hline
+\rowcolor{colabpybg} React & 19.3.0 & Modelo de componentes, hooks y contexto. \\ \hline
+Expo SDK & 58 (CLI 58.1.13) & Herramientas, \texttt{expo-camera}, \texttt{expo-status-bar}, exportación web. \\ \hline
+\rowcolor{colabpybg} TypeScript & 6.0 & Tipado estático de modelo, navegación y componentes. \\ \hline
+React Navigation & 7.x & \texttt{native-stack} y \texttt{bottom-tabs}. \\ \hline
+\rowcolor{colabpybg} react-native-safe-area-context & 5.10 & Márgenes seguros (reemplazo del \texttt{Safe\allowbreak{}Area\allowbreak{}View} del núcleo). \\ \hline
+react-native-svg / qrcode-svg & 15.16 / 6.3 & Dibujo vectorial del código QR. \\ \hline
+\rowcolor{colabpybg} react-native-web & 0.21 & Traducción de los mismos componentes al DOM. \\ \hline
+Jest + jest-expo & 30 / 58 & Pruebas unitarias del dominio y del reductor. \\ \hline
+\rowcolor{colabpybg} Node.js / npm & 22.14 / 10.9 & Entorno de ejecución de las herramientas. \\ \hline
+\end{tabular}
+\end{table}
+

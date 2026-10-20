@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="comun.css">
+<style>
+  .lienzo { width: 1600px; }
+  .grid { display: grid; grid-template-columns: 260px 1fr 330px; gap: 60px 70px; align-items: center; }
+  .nodo { border: 2px solid var(--azul); border-radius: 12px; padding: 12px 14px; background: #fff; font-size: 15px; }
+  .nodo b { display: block; font-size: 16px; }
+  .nodo small { color: var(--gris); font-size: 12.5px; }
+  .pila { border-color: var(--rojo); background: var(--rojo-suave); }
+  .grupo { border: 2px dashed var(--gris); border-radius: 16px; padding: 14px; }
+  .grupo h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--gris); }
+  .tabs { display: flex; gap: 10px; }
+  .tabs .nodo { flex: 1; text-align: center; }
+  .col { display: flex; flex-direction: column; gap: 26px; }
+  .leyenda { display: flex; gap: 28px; margin-top: 30px; font-size: 14px; color: var(--gris); align-items: center; }
+  .m { display: inline-block; width: 28px; height: 16px; border-radius: 4px; border: 2px solid; vertical-align: middle; margin-right: 6px; }
+</style>
+</head>
+<body>
+<div class="lienzo" id="lienzo">
+  <h1 class="titulo">Mapa de navegación</h1>
+  <p class="subtitulo">Una pila nativa raíz (createNativeStackNavigator) contiene el inicio de sesión, tres navegadores de pestañas inferiores y tres pantallas apiladas.</p>
+  <div class="grid">
+    <div class="nodo pila" id="login"><b>I1 · Login</b><small>Pila raíz · sin cabecera</small></div>
+    <div class="col">
+      <div class="grupo" id="gE"><h3>Pestañas del estudiante</h3>
+        <div class="tabs">
+          <div class="nodo" id="inicio"><b>I2 Inicio</b><small>Dashboard</small></div>
+          <div class="nodo" id="catalogo"><b>I3 Catálogo</b><small>SectionList</small></div>
+          <div class="nodo" id="horario"><b>I6 Horario</b><small>Semana / lista</small></div>
+          <div class="nodo" id="perfilE"><b>I12 Perfil</b><small>común</small></div>
+        </div>
+      </div>
+      <div class="grupo" id="gD"><h3>Pestañas del docente</h3>
+        <div class="tabs">
+          <div class="nodo" id="panel"><b>I7 Panel</b><small>FlatList</small></div>
+          <div class="nodo" id="escaner"><b>I9 Escáner</b><small>CameraView</small></div>
+          <div class="nodo" id="perfilD"><b>I12 Perfil</b><small>común</small></div>
+        </div>
+      </div>
+      <div class="grupo" id="gA"><h3>Pestañas de administración</h3>
+        <div class="tabs">
+          <div class="nodo" id="labs"><b>I10 Laboratorios</b><small>FlatList numColumns</small></div>
+          <div class="nodo" id="config"><b>I11 Matrícula</b><small>Formulario</small></div>
+          <div class="nodo" id="perfilA"><b>I12 Perfil</b><small>común</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="nodo pila" id="detalle"><b>I4 · Detalle del grupo</b><small>presentation: 'modal'</small></div>
+      <div class="nodo pila" id="ficha"><b>I5 · Pase QR</b><small>Pila · navigation.replace desde I4</small></div>
+      <div class="nodo pila" id="nomina"><b>I8 · Nómina</b><small>Pila · título dinámico (setOptions)</small></div>
+    </div>
+  </div>
+  <div class="leyenda">
+    <span><span class="m" style="border-color: var(--rojo); background: var(--rojo-suave)"></span>Pantalla de la pila nativa</span>
+    <span><span class="m" style="border-color: var(--azul)"></span>Pestaña (bottom-tabs)</span>
+    <span>→ navigate / replace &nbsp;&nbsp; ⇢ reset al iniciar o cerrar sesión</span>
+  </div>
+  <svg class="conectores" id="svg"></svg>
+</div>
+<script>
+const svg = document.getElementById('svg');
+const base = document.getElementById('lienzo').getBoundingClientRect();
+svg.setAttribute('width', base.width); svg.setAttribute('height', base.height);
+svg.innerHTML = '<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4A5868"/></marker></defs>';
+const r = (id) => document.getElementById(id).getBoundingClientRect();
+function flecha(a, b, { discontinua = false, desdeAbajo = false, curva = 0 } = {}) {
+  const ra = r(a), rb = r(b);
+  let x1, y1, x2, y2;
+  if (desdeAbajo) { x1 = ra.left + ra.width / 2; y1 = ra.bottom; x2 = rb.left + rb.width / 2; y2 = rb.top; }
+  else { x1 = ra.right; y1 = ra.top + ra.height / 2; x2 = rb.left; y2 = rb.top + rb.height / 2; }
+  x1 -= base.left; x2 -= base.left; y1 -= base.top; y2 -= base.top;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  const cx = (x1 + x2) / 2;
+  p.setAttribute('d', desdeAbajo ? `M${x1},${y1} C${x1},${y1 + 40 + curva} ${x2},${y2 - 40 - curva} ${x2},${y2 - 2}` : `M${x1},${y1} C${cx},${y1 + curva} ${cx},${y2 - curva} ${x2 - 2},${y2}`);
+  p.setAttribute('fill', 'none'); p.setAttribute('stroke', '#4A5868'); p.setAttribute('stroke-width', '2');
+  if (discontinua) p.setAttribute('stroke-dasharray', '7 6');
+  p.setAttribute('marker-end', 'url(#f)');
+  svg.appendChild(p);
+}
+flecha('login', 'gE', { discontinua: true });
+flecha('login', 'gD', { discontinua: true });
+flecha('login', 'gA', { discontinua: true });
+flecha('gE', 'detalle');
+flecha('gE', 'ficha');
+flecha('detalle', 'ficha', { desdeAbajo: true });
+flecha('gD', 'nomina');
+document.body.dataset.listo = '1';
+</script>
+</body>
+</html>

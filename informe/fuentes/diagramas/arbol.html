@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="comun.css">
+<style>
+  .lienzo { width: 1800px; }
+  .nivel { display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; margin-bottom: 46px; }
+  .nivel.uno { grid-template-columns: 1fr; justify-items: center; }
+  .etiqueta-nivel {
+    font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--gris); margin: 0 0 10px 2px;
+    position: relative; z-index: 1; display: inline-block; background: #fff; padding-right: 8px;
+  }
+  #arbol { display: flex; flex-direction: column; }
+  #arbol > .etiqueta-nivel { align-self: flex-start; }
+  .caja {
+    border-radius: 12px; padding: 14px 16px; font-size: 16px; line-height: 1.35;
+    border: 2px solid; background: #fff; min-height: 78px;
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .caja b { font-size: 12.5px; letter-spacing: .05em; }
+  .central { width: 1100px; font-size: 21px; font-weight: 700; text-align: center; min-height: 96px; color: #fff; }
+  .final { width: 900px; text-align: center; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+  .chip { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--verde-suave); color: var(--verde); }
+</style>
+</head>
+<body>
+<div class="lienzo" id="lienzo">
+  <h1 class="titulo" id="titulo"></h1>
+  <p class="subtitulo" id="sub"></p>
+  <div id="arbol"></div>
+  <svg class="conectores" id="svg"></svg>
+</div>
+<script>
+const MODO = new URLSearchParams(location.search).get('modo') || 'problemas';
+
+const PROBLEMAS = {
+  titulo: 'Árbol de problemas · Matrícula de laboratorios EPIS-UNSA',
+  sub: 'Lectura de abajo hacia arriba: las causas indirectas originan las causas directas, que producen el problema central y sus efectos.',
+  final: 'Pérdida de horas de práctica y menor calidad del aprendizaje en los cursos con laboratorio',
+  efectos: [
+    'Rechazos después de completar el trámite de matrícula',
+    'Permutas y cambios de grupo cuando las clases ya empezaron',
+    'Laboratorios con más estudiantes que computadoras',
+    'Control de asistencia lento y nóminas que llegan semanas tarde',
+    'Grupos adicionales abiertos sin datos reales de demanda',
+  ],
+  central: 'La matrícula en los laboratorios de la EPIS-UNSA es lenta, poco transparente y genera sobrecupos y cruces de horario',
+  causas: [
+    'Las vacantes que ve el estudiante están desactualizadas',
+    'Los cruces de horario se detectan tarde y a mano',
+    'Las reservas no respetan el aforo físico de la sala',
+    'La asistencia y las nóminas se llevan en papel',
+    'Los parámetros de cada laboratorio están dispersos',
+  ],
+  raices: [
+    'Listas y hojas de cálculo que no se actualizan en tiempo real',
+    'No se contrasta el grupo práctico con la teoría ya inscrita',
+    'Inscripciones simultáneas sin una operación atómica de reserva',
+    'No existe una constancia digital verificable del estudiante',
+    'Capacidad, ventana de matrícula y estado de cada sala se coordinan por correo',
+  ],
+};
+
+const OBJETIVOS = {
+  titulo: 'Árbol de objetivos · Medios que se convierten en funcionalidades',
+  sub: 'Cada condición negativa del árbol de problemas se expresa como una situación deseada; los medios de la base son los que implementa MatriLab.',
+  final: 'Más horas efectivas de práctica y mejor aprendizaje en los cursos con laboratorio',
+  efectos: [
+    'Confirmación inmediata, sin rechazos tardíos',
+    'Horario estable desde la primera semana de clases',
+    'Una computadora por estudiante en cada sesión',
+    'Asistencia registrada en segundos y nómina disponible desde el día uno',
+    'Apertura de grupos adicionales basada en datos',
+  ],
+  central: 'La matrícula de laboratorios es ágil, transparente y no produce sobrecupos ni cruces de horario',
+  causas: [
+    'Vacantes visibles al momento, con semáforo de disponibilidad',
+    'Validación automática de cruces antes de confirmar',
+    'Reserva atómica que nunca supera el aforo',
+    'Pase digital con QR y nómina en vivo para el docente',
+    'Parametrización centralizada de salas y ventana de matrícula',
+  ],
+  raices: [
+    'Catálogo conectado al estado de cada grupo',
+    'Contraste del grupo con los laboratorios y la teoría inscritos',
+    'Una sola operación descuenta el cupo y registra la matrícula',
+    'Código verificable y lector QR en el móvil del docente',
+    'Panel de laboratorios y de configuración para coordinación',
+  ],
+  interfaces: [
+    ['I2 Panel', 'I3 Catálogo'],
+    ['I4 Detalle', 'I6 Horario'],
+    ['I4 Detalle', 'I5 Pase QR'],
+    ['I5 Pase QR', 'I7 Panel docente', 'I8 Nómina', 'I9 Escáner'],
+    ['I10 Laboratorios', 'I11 Matrícula'],
+  ],
+};
+
+const d = MODO === 'objetivos' ? OBJETIVOS : PROBLEMAS;
+const obj = MODO === 'objetivos';
+const C = obj
+  ? { central: 'var(--verde)', efecto: ['var(--azul)', 'var(--azul-suave)'], causa: ['var(--verde)', 'var(--verde-suave)'], raiz: ['var(--verde)', '#fff'] }
+  : { central: 'var(--rojo)', efecto: ['var(--azul)', 'var(--azul-suave)'], causa: ['var(--rojo)', 'var(--rojo-suave)'], raiz: ['var(--rojo)', '#fff'] };
+
+document.getElementById('titulo').textContent = d.titulo;
+document.getElementById('sub').textContent = d.sub;
+const arbol = document.getElementById('arbol');
+
+function nivel(etiqueta, uno) {
+  const e = document.createElement('div');
+  e.className = 'etiqueta-nivel';
+  e.textContent = etiqueta;
+  arbol.appendChild(e);
+  const n = document.createElement('div');
+  n.className = 'nivel' + (uno ? ' uno' : '');
+  arbol.appendChild(n);
+  return n;
+}
+function caja(padre, texto, borde, fondo, clase, pref, extra) {
+  const c = document.createElement('div');
+  c.className = 'caja ' + (clase || '');
+  c.style.borderColor = borde;
+  c.style.background = fondo;
+  if (pref) { const b = document.createElement('b'); b.textContent = pref; b.style.color = borde; c.appendChild(b); }
+  const s = document.createElement('span'); s.textContent = texto; c.appendChild(s);
+  if (extra) c.appendChild(extra);
+  padre.appendChild(c);
+  return c;
+}
+
+const fin = caja(nivel(obj ? 'Fin último' : 'Efecto final', true), d.final, 'var(--azul)', '#fff', 'final');
+const nE = nivel(obj ? 'Fines' : 'Efectos directos');
+const efectos = d.efectos.map((t, i) => caja(nE, t, C.efecto[0], C.efecto[1], '', (obj ? 'FIN ' : 'EFECTO ') + (i + 1)));
+const central = caja(nivel(obj ? 'Objetivo central' : 'Problema central', true), d.central, C.central, C.central, 'central');
+const nC = nivel(obj ? 'Medios de primer nivel' : 'Causas directas');
+const causas = d.causas.map((t, i) => caja(nC, t, C.causa[0], C.causa[1], '', (obj ? 'MEDIO ' : 'CAUSA ') + (i + 1)));
+const nR = nivel(obj ? 'Medios fundamentales → interfaces de MatriLab' : 'Causas indirectas');
+const raices = d.raices.map((t, i) => {
+  let extra = null;
+  if (obj) {
+    extra = document.createElement('div');
+    extra.className = 'chips';
+    d.interfaces[i].forEach((x) => { const ch = document.createElement('span'); ch.className = 'chip'; ch.textContent = x; extra.appendChild(ch); });
+  }
+  return caja(nR, t, C.raiz[0], C.raiz[1], '', (obj ? 'MEDIO ' : 'CAUSA ') + (i + 1) + '.1', extra);
+});
+
+// Conectores: siempre del nivel inferior hacia el superior (relación causa → efecto / medio → fin).
+const svg = document.getElementById('svg');
+const base = document.getElementById('lienzo').getBoundingClientRect();
+svg.setAttribute('width', base.width);
+svg.setAttribute('height', base.height);
+svg.innerHTML = '<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4A5868"/></marker></defs>';
+function linea(de, a) {
+  const r1 = de.getBoundingClientRect(), r2 = a.getBoundingClientRect();
+  const x1 = r1.left + r1.width / 2 - base.left, y1 = r1.top - base.top;
+  const x2 = Math.max(r2.left + 30, Math.min(r2.right - 30, x1)) - base.left + (r2.left - base.left > x1 || r2.right - base.left < x1 ? 0 : 0);
+  const xd = r2.width > 600 ? Math.max(r2.left - base.left + 40, Math.min(r2.right - base.left - 40, x1)) : r2.left + r2.width / 2 - base.left;
+  const y2 = r2.bottom - base.top;
+  const ym = (y1 + y2) / 2;
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', `M${x1},${y1} C${x1},${ym} ${xd},${ym} ${xd},${y2 + 2}`);
+  p.setAttribute('fill', 'none');
+  p.setAttribute('stroke', '#4A5868');
+  p.setAttribute('stroke-width', '2');
+  p.setAttribute('marker-end', 'url(#f)');
+  svg.appendChild(p);
+}
+raices.forEach((r, i) => linea(r, causas[i]));
+causas.forEach((c) => linea(c, central));
+efectos.forEach((e) => linea(central, e));
+efectos.forEach((e) => linea(e, fin));
+document.body.dataset.listo = '1';
+</script>
+</body>
+</html>

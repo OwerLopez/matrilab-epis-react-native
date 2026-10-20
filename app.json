@@ -22,7 +22,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "single"
     },
     "scheme": "matrilab",
     "description": "Matrícula de laboratorios de la EPIS-UNSA: catálogo con vacantes en vivo, validación de cruces, pase QR y control de asistencia.",
@@ -33,6 +34,9 @@
           "cameraPermission": "MatriLab usa la cámara para leer los pases QR de asistencia."
         }
       ]
-    ]
+    ],
+    "experiments": {
+      "baseUrl": "/matrilab-epis-react-native"
+    }
   }
 }

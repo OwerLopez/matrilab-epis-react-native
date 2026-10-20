@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="comun.css">
+<style>
+  .lienzo { width: 1500px; }
+  .capa { border: 2px solid; border-radius: 14px; padding: 16px 18px 18px; margin-bottom: 18px; }
+  .capa h2 { margin: 0 0 12px; font-size: 15px; letter-spacing: .07em; text-transform: uppercase; }
+  .fila { display: flex; gap: 14px; flex-wrap: wrap; }
+  .mod { flex: 1; min-width: 200px; background: #fff; border: 1.5px solid var(--gris-claro); border-radius: 10px; padding: 12px 14px; }
+  .mod b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .mod code { font-family: Consolas, monospace; font-size: 13px; color: var(--azul); }
+  .mod p { margin: 4px 0 0; font-size: 13.5px; color: var(--gris); line-height: 1.35; }
+  .flecha { text-align: center; font-size: 13px; color: var(--gris); margin: -8px 0 10px; }
+  .flecha::before { content: "▲ ▼"; display: block; font-size: 16px; letter-spacing: 6px; color: var(--gris); }
+  .lado { display: grid; grid-template-columns: 3fr 1fr; gap: 18px; }
+</style>
+</head>
+<body>
+<div class="lienzo" id="lienzo">
+  <h1 class="titulo">Arquitectura de MatriLab EPIS en React Native</h1>
+  <p class="subtitulo">Las capas superiores dependen solo de las inferiores; el dominio no conoce React ni la plataforma, por eso se prueba con Jest sin emulador.</p>
+
+  <div class="lado">
+    <div>
+      <div class="capa" style="border-color: var(--rojo); background: var(--rojo-suave)">
+        <h2 style="color: var(--rojo)">Presentación</h2>
+        <div class="fila">
+          <div class="mod"><b>Navegación</b><code>RootNavigator.tsx</code><p>native-stack (pila nativa) + tres bottom-tabs, una por rol. Detalle del grupo como modal nativo.</p></div>
+          <div class="mod"><b>12 pantallas</b><code>src/screens/**</code><p>Estudiante (6), docente (3), administración (2) y perfil común. Solo componentes del núcleo de React Native.</p></div>
+          <div class="mod"><b>Componentes propios</b><code>components/ui.tsx</code><p>Tarjeta, Boton, Chip, Insignia, BarraProgreso, Kpi, FilaAjuste, Avatar, Vacio.</p></div>
+        </div>
+      </div>
+      <div class="flecha">props · hooks · dispatch</div>
+      <div class="capa" style="border-color: var(--azul); background: var(--azul-suave)">
+        <h2 style="color: var(--azul)">Estado y tema</h2>
+        <div class="fila">
+          <div class="mod"><b>AppStore</b><code>state/AppStore.tsx</code><p>Context + useReducer. Siete acciones; el reductor es la única vía para modificar cupos (reserva atómica).</p></div>
+          <div class="mod"><b>Selectores</b><code>matriculasActivas · nomina · codigoVerificacion</code><p>Derivan datos de la vista a partir del estado sin duplicarlo.</p></div>
+          <div class="mod"><b>Tema</b><code>ThemeContext · tokens.ts</code><p>Paletas clara/oscura, escala de espacios de 4 pt, radios y tipografía. Sigue a useColorScheme.</p></div>
+        </div>
+      </div>
+      <div class="flecha">funciones puras</div>
+      <div class="capa" style="border-color: var(--verde); background: var(--verde-suave)">
+        <h2 style="color: var(--verde)">Dominio</h2>
+        <div class="fila">
+          <div class="mod"><b>Reglas de negocio</b><code>domain/reglas.ts</code><p>RN-02 cruce de horario, semáforo, validarMatricula, reservarCupo, huella FNV-1a, payload y verificación del QR, CSV.</p></div>
+          <div class="mod"><b>Modelo</b><code>domain/types.ts</code><p>Usuario, Laboratorio, Curso, Turno, ClaseTeoria, Matricula, ConfigMatricula.</p></div>
+          <div class="mod"><b>Datos 2026-B</b><code>domain/datos.ts</code><p>4 cursos de VIII semestre, 5 ambientes, 9 grupos, teoría inscrita y nómina sintética.</p></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="capa" style="border-color: var(--ambar); background: var(--ambar-suave); height: calc(100% - 18px)">
+        <h2 style="color: var(--ambar)">Plataforma</h2>
+        <div class="mod" style="margin-bottom: 12px"><b>Expo SDK 58</b><p>expo-camera (CameraView, lector QR), expo-status-bar, Expo Go para ejecutar en el dispositivo.</p></div>
+        <div class="mod" style="margin-bottom: 12px"><b>React Native 0.88</b><p>Nueva arquitectura: renderizador Fabric, JSI y Turbo Modules; motor JavaScript Hermes; Yoga para el layout flexbox.</p></div>
+        <div class="mod" style="margin-bottom: 12px"><b>Android</b><p>Fragment (native-stack), ViewGroup, TextView, EditText, ImageView y el Switch nativo de Android.</p></div>
+        <div class="mod" style="margin-bottom: 12px"><b>iOS</b><p>UINavigationController, UIView, UITextView, UITextField.</p></div>
+        <div class="mod"><b>Web</b><p>react-native-web traduce los mismos componentes al DOM.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>document.body.dataset.listo = '1';</script>
+</body>
+</html>

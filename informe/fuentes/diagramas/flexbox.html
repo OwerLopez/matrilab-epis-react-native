@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="comun.css">
+<style>
+  .lienzo { width: 1500px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .panel { border: 1.5px solid var(--gris-claro); border-radius: 12px; padding: 12px; background: #FAFBFD; }
+  .panel h3 { margin: 0 0 4px; font-size: 15px; color: var(--azul); }
+  .panel code { font-family: Consolas, monospace; font-size: 12.5px; color: var(--rojo); display: block; margin-bottom: 8px; min-height: 32px; white-space: pre-line; }
+  .caja { height: 170px; border: 2px dashed #9AA7B6; border-radius: 8px; display: flex; padding: 6px; gap: 6px; position: relative; background: #fff; }
+  .h { background: var(--azul); color: #fff; font-weight: 700; font-size: 13px; border-radius: 6px; display: flex; align-items: center; justify-content: center; min-width: 38px; min-height: 30px; }
+  .h.r { background: var(--rojo); } .h.v { background: var(--verde); }
+  .eje { position: absolute; font-size: 11px; font-weight: 700; color: var(--ambar); }
+  .nota { font-size: 12.5px; color: var(--gris); margin: 8px 0 0; line-height: 1.35; }
+</style>
+</head>
+<body>
+<div class="lienzo" id="lienzo">
+  <h1 class="titulo">Flexbox en React Native (motor Yoga)</h1>
+  <p class="subtitulo">Cada panel se dibujó con las mismas propiedades que usa la app. Diferencia clave con la web: en React Native flexDirection vale 'column' por defecto.</p>
+  <div class="grid">
+    <div class="panel"><h3>1 · Eje por defecto</h3><code>flexDirection: 'column'
+(valor por defecto)</code>
+      <div class="caja" style="flex-direction: column"><div class="h" style="height:34px">A</div><div class="h" style="height:34px">B</div><div class="h" style="height:34px">C</div><span class="eje" style="right:10px; bottom:6px">eje principal ↓</span></div>
+      <p class="nota">Los hijos se apilan verticalmente. Es la base de casi todas las pantallas (formularios, tarjetas).</p></div>
+    <div class="panel"><h3>2 · Fila</h3><code>flexDirection: 'row'
+alignItems: 'center'</code>
+      <div class="caja" style="align-items: center"><div class="h" style="width:44px;height:44px;border-radius:22px">AV</div><div class="h" style="flex:1;height:50px">flex: 1</div><div class="h r" style="width:38px">🔔</div><span class="eje" style="left:10px; bottom:6px">eje principal →</span></div>
+      <p class="nota">Saludo del panel: avatar fijo, texto que crece con flex: 1 y un icono al final.</p></div>
+    <div class="panel"><h3>3 · justifyContent</h3><code>justifyContent: 'space-between'
+flexDirection: 'row'</code>
+      <div class="caja" style="justify-content: space-between; align-items: flex-start"><div class="h" style="width:120px">Título</div><div class="h v" style="width:70px">Insignia</div></div>
+      <p class="nota">Reparte el espacio libre en el eje principal: cabeceras de tarjeta con texto a la izquierda e insignia a la derecha.</p></div>
+    <div class="panel"><h3>4 · flexWrap + gap</h3><code>flexDirection: 'row'
+flexWrap: 'wrap', gap: 6</code>
+      <div class="caja" style="flex-wrap: wrap; align-content: flex-start; gap: 6px"><script>for (let i = 1; i <= 15; i++) document.write(`<div class="h ${i <= 9 ? 'r' : 'v'}" style="width:38px">${i}</div>`)</script></div>
+      <p class="nota">Mapa de puestos del laboratorio: las celdas de ancho fijo saltan de línea solas en cualquier ancho.</p></div>
+    <div class="panel"><h3>5 · alignItems</h3><code>alignItems: 'stretch' (defecto)
+vs 'flex-start'</code>
+      <div class="caja" style="flex-direction: column; gap: 6px"><div class="h">stretch: ocupa todo el ancho</div><div class="h r" style="align-self:flex-start; padding: 0 10px">alignSelf: 'flex-start'</div></div>
+      <p class="nota">Las insignias usan alignSelf: 'flex-start' para no estirarse a lo ancho de la tarjeta.</p></div>
+    <div class="panel"><h3>6 · flexBasis porcentual</h3><code>flexBasis: '47%'
+flexGrow: 1</code>
+      <div class="caja" style="flex-wrap: wrap; gap: 6px; align-content: flex-start"><div class="h" style="flex-basis:47%;flex-grow:1;height:70px">KPI 1</div><div class="h" style="flex-basis:47%;flex-grow:1;height:70px">KPI 2</div><div class="h" style="flex-basis:47%;flex-grow:1;height:70px">KPI 3</div><div class="h" style="flex-basis:47%;flex-grow:1;height:70px">KPI 4</div></div>
+      <p class="nota">Cuadrícula de indicadores de dos columnas que se adapta sin calcular anchos en píxeles.</p></div>
+    <div class="panel"><h3>7 · position: 'absolute'</h3><code>position: 'absolute'
+top, right / StyleSheet.absoluteFill</code>
+      <div class="caja" style="display:block"><div class="h" style="position:absolute; inset:6px; background: #2B3D52; align-items:flex-end; padding-bottom:8px">absoluteFill (cámara)</div><div class="h r" style="position:absolute; top:14px; right:14px; padding:0 10px">sello</div><div style="position:absolute; left:50%; top:42%; width:70px; height:70px; margin:-35px; border:3px solid #fff; border-radius:10px"></div></div>
+      <p class="nota">Saca al hijo del flujo: sello del pase QR, guía de encuadre del escáner y bloques del horario.</p></div>
+    <div class="panel"><h3>8 · Dimensiones reactivas</h3><code>useWindowDimensions()
+numColumns = width &lt; 600 ? 1 : 2</code>
+      <div class="caja" style="gap: 10px; align-items: flex-start"><div style="width:42%;height:150px;border:2px solid #9AA7B6;border-radius:10px;display:flex;flex-direction:column;gap:5px;padding:5px"><div class="h" style="height:40px">1</div><div class="h" style="height:40px">2</div><span class="nota" style="margin:0">411 dp</span></div><div style="flex:1;height:110px;border:2px solid #9AA7B6;border-radius:10px;display:flex;flex-wrap:wrap;gap:5px;padding:5px;align-content:flex-start"><div class="h" style="width:46%;height:36px">1</div><div class="h" style="width:46%;height:36px">2</div><div class="h" style="width:46%;height:36px">3</div><span class="nota" style="margin:0">915 dp</span></div></div>
+      <p class="nota">El hook se vuelve a ejecutar al girar el teléfono; la lista de laboratorios pasa de 1 a 2 columnas.</p></div>
+  </div>
+</div>
+<script>document.body.dataset.listo = '1';</script>
+</body>
+</html>

@@ -40,7 +40,12 @@ yarn-error.*
 /ios
 /android
 
-# local tooling
-.claude/
-AGENTS.md
-CLAUDE.md
+# pruebas
+coverage/
+
+# informe: archivos intermedios de LaTeX y bloqueos de Word
+informe/main.pdf
+informe/*.log
+informe/*.aux
+informe/~$*
+informe/fuentes/__pycache__/
