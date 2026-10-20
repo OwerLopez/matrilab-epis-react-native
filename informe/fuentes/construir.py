@@ -1,8 +1,9 @@
 """Genera el informe del LAB 04 en LaTeX (main.tex + sections/) y en DOCX a partir de contenido.py.
 
-Uso: python construir.py
+Uso: python construir.py [--docx]
 El PDF se compila después con Tectonic sobre ../main.tex.
 """
+import sys
 from pathlib import Path
 
 from contenido import inf
@@ -48,6 +49,7 @@ PREAMBULO = r"""\documentclass[11pt, a4paper]{article}
 \usepackage{lastpage}
 \usepackage{float}
 \usepackage{needspace}
+\usepackage[section]{placeins}
 \usepackage{caption}
 \usepackage{multirow}
 \usepackage{amsmath}
@@ -82,6 +84,7 @@ PREAMBULO = r"""\documentclass[11pt, a4paper]{article}
 
 \emergencystretch=3em
 \captionsetup{font=small, labelfont=bf, labelsep=period}
+\renewcommand{\topfraction}{0.9}\renewcommand{\bottomfraction}{0.8}\renewcommand{\textfraction}{0.08}\renewcommand{\floatpagefraction}{0.75}\setcounter{topnumber}{3}\setcounter{totalnumber}{4}
 \captionsetup[table]{position=top, skip=4pt}
 \renewcommand{\listfigurename}{\textcolor{colabpyblue}{Índice de Figuras}}
 \renewcommand{\listtablename}{\textcolor{colabpyblue}{Índice de Tablas}}
@@ -140,13 +143,14 @@ PREAMBULO = r"""\documentclass[11pt, a4paper]{article}
 }
 
 \newcommand{\colabtitle}[1]{
+    \FloatBarrier
     \needspace{7\baselineskip}
     \vspace{0.4cm}
     {\large \textbf{\textcolor{colabpyblue}{#1}}}
     \vspace{0.1cm} \hrule height 1pt \relax \vspace{0.3cm}
 }
 
-\newcommand{\subsubtitulo}[1]{\par\needspace{9\baselineskip}\vspace{0.25cm}\noindent{\normalsize\textbf{\textcolor{unsared}{\faAngleRight}\ \textcolor{colabpyblue}{#1}}}\par\nopagebreak\vspace{0.15cm}}
+\newcommand{\subsubtitulo}[1]{\FloatBarrier\par\needspace{9\baselineskip}\vspace{0.25cm}\noindent{\normalsize\textbf{\textcolor{unsared}{\faAngleRight}\ \textcolor{colabpyblue}{#1}}}\par\nopagebreak\vspace{0.15cm}}
 
 \newtcolorbox{notaInfo}{enhanced, breakable, colback=colabpybg, colframe=colabpyblue, boxrule=0.6pt, leftrule=3pt, sharp corners, left=6pt, right=6pt, top=4pt, bottom=4pt, fontupper=\small}
 \newtcolorbox{notaOk}{enhanced, breakable, colback=colaboutbg, colframe=colaboutgreen, boxrule=0.6pt, leftrule=3pt, sharp corners, left=6pt, right=6pt, top=4pt, bottom=4pt, fontupper=\small}
@@ -229,8 +233,8 @@ REPOSITORIO: &
 \vspace{0.6cm}
 
 \begin{center}
-\includegraphics[width=0.66\textwidth]{img/figuras/fig_i04.png}\\[0.2cm]
-{\small\itshape MatriLab EPIS ejecutándose en Android: mockup, grupo disponible y bloqueo por cruce de horario.}
+\includegraphics[width=0.78\textwidth]{img/figuras/fig_i04.png}\\[0.2cm]
+{\small\itshape MatriLab EPIS ejecutándose en Android: mockup, grupo disponible, bloqueo por cruce de horario y grupo agotado.}
 \end{center}
 \clearpage
 
@@ -258,6 +262,8 @@ def main():
     cuerpo = "".join(f"\\input{{sections/{arch}}}\n" for _, arch in secciones)
     (RAIZ / "main.tex").write_text(PREAMBULO + portada + cuerpo + "\n\\end{document}\n", encoding="utf-8", newline="\n")
     print("main.tex con", len(secciones), "secciones")
+    if "--docx" not in sys.argv:
+        return
 
     d = Docx()
     d.encabezado(RAIZ / "img" / "logo_episunsa.png", RAIZ / "img" / "logo_abet.png")
@@ -276,7 +282,7 @@ def main():
     p = d.doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.add_run().add_picture(str(RAIZ / "img" / "figuras" / "fig_i04.png"), width=Cm(11.5))
     p = d.doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = p.add_run("MatriLab EPIS ejecutándose en Android: mockup, grupo disponible y bloqueo por cruce de horario."); r.italic = True
+    r = p.add_run("MatriLab EPIS ejecutándose en Android: mockup, grupo disponible, bloqueo por cruce de horario y grupo agotado."); r.italic = True
     d.doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
     d.indices()
     d.construir(inf, RAIZ, RAIZ.parent, ("Lopez Arela, Ower Frank", "OL"))

@@ -68,9 +68,10 @@ informe/        informe en LaTeX y DOCX, diagramas y generadores
 La carpeta [`informe/`](informe) contiene el informe del laboratorio en el formato de la EPIS:
 
 - `main.tex` y `sections/`: fuente LaTeX (compila con XeLaTeX o Tectonic).
-- `LAB04_..._React_Native.pdf` y `.docx`: versiones finales.
+- `LAB04_..._React_Native.pdf`: informe compilado, centrado en capturas y explicaciones de cada interfaz.
+- `LAB04_..._React_Native.docx`: versión para la entrega en Word, con el código de la aplicación en los anexos.
 - `fuentes/diagramas/`: árbol de problemas, árbol de objetivos, mockups, navegación, arquitectura y patrones de Flexbox en HTML, renderizados con `render.mjs`.
-- `fuentes/construir.py`: genera las secciones LaTeX y el DOCX a partir de `contenido.py`; `actualizar_docx.ps1` actualiza índices y campos en Word.
+- `fuentes/construir.py`: genera las secciones LaTeX a partir de `contenido.py` (con `--docx` también el documento Word); `componer_figuras.py` arma las figuras de mockups y capturas.
 
 ## Equipo
 

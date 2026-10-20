@@ -2,7 +2,7 @@
 \seccionInforme{5. Apreciación de la herramienta}
 \phantomsection\addcontentsline{toc}{section}{5. Apreciación de la herramienta}
 
-La valoración se basa en lo que el equipo observó al construir y probar MatriLab con React Native y Expo, no en afirmaciones generales sobre el framework.
+La valoración se basa en lo que el equipo observó al construir y probar MatriLab con React Native y Expo.
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{5.1 Características favorables}
@@ -10,11 +10,11 @@ La valoración se basa en lo que el equipo observó al construir y probar MatriL
 
 \subsubtitulo{A. Interfaces nativas reales a partir de un solo código}
 
-Cada componente del núcleo se convierte en una vista nativa del sistema [2]. En la práctica, el \texttt{Switch} de la configuración es el interruptor de Android, el teclado y la hoja de compartir son los del teléfono, el \texttt{Alert} es el diálogo del sistema y \texttt{native-stack} usa las transiciones y el gesto de retroceso nativos. Con ese mismo código, sin una sola línea específica, la aplicación se exportó a la web (Figura 21). Las diferencias por plataforma que sí hubo que escribir fueron mínimas y explícitas: el \texttt{behavior} de \texttt{Keyboard\allowbreak{}Avoiding\allowbreak{}View} y el \texttt{android\_\allowbreak{}ripple} de \texttt{Pressable}. Para un proyecto universitario que debe llegar a estudiantes con Android y con iPhone, esto reduce a la mitad el trabajo frente al desarrollo nativo separado.
+Cada componente del núcleo se convierte en una vista nativa del sistema [2]. En las capturas se ve que el interruptor de la configuración es el de Android, el teclado y la hoja de compartir son los del teléfono, los diálogos de anular y guardar son los del sistema y la pila de navegación usa las transiciones y el gesto de retroceso nativos. Con ese mismo código, sin cambios, la aplicación se exportó a la web (Figura \ref{fig:web}). Las diferencias por plataforma que sí hubo que escribir fueron mínimas: el comportamiento del teclado y el efecto ripple de Android. Para un proyecto que debe llegar a estudiantes con Android y con iPhone, esto reduce a la mitad el trabajo frente al desarrollo nativo separado.
 
 \subsubtitulo{B. Ciclo de desarrollo rápido y ecosistema JavaScript}
 
-Con Expo Go no fue necesario compilar proyectos de Android Studio: el emulador cargaba el paquete desde Metro y \textit{Fast Refresh} aplicaba cada cambio de estilo en uno o dos segundos conservando el estado de la pantalla, lo que permitió ajustar márgenes, columnas y colores viendo el resultado al instante. El ecosistema de JavaScript aportó piezas maduras: TypeScript detectó errores de navegación entre pantallas antes de ejecutarlas, \texttt{react-native-qrcode-svg} resolvió el QR en una línea y Jest probó las reglas de negocio en un segundo. El mismo lenguaje sirvió para la aplicación, las pruebas y el script de capturas.
+Con Expo Go no fue necesario compilar proyectos de Android Studio: el emulador cargaba la aplicación desde Metro (Figura \ref{fig:metro}) y \textit{Fast Refresh} aplicaba cada cambio de estilo en uno o dos segundos conservando el estado de la pantalla, lo que permitió ajustar márgenes, columnas y colores viendo el resultado al instante. El ecosistema aportó piezas maduras: TypeScript detectó errores de navegación entre pantallas antes de ejecutarlas, una librería resolvió el código QR y Jest probó las reglas de negocio en segundos. El mismo lenguaje sirvió para la aplicación, las pruebas y el recorrido automatizado de capturas.
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{5.2 Características desfavorables}
@@ -22,27 +22,9 @@ Con Expo Go no fue necesario compilar proyectos de Android Studio: el emulador c
 
 \subsubtitulo{A. Dependencia de la compatibilidad entre versiones}
 
-Una aplicación React Native depende de una cadena de versiones que deben coincidir: Expo SDK, React Native, React, cada librería con código nativo (\texttt{react-native-screens}, \texttt{react-native-svg}, \texttt{expo-camera}) y la versión de Expo Go instalada en el teléfono, que solo abre proyectos de su mismo SDK. Fue obligatorio instalar las dependencias con \texttt{npx expo install} para no romper esa cadena. El ritmo de cambios también se notó: el \texttt{Safe\allowbreak{}Area\allowbreak{}View} del núcleo figura como obsoleto [16], la Nueva Arquitectura cambió el comportamiento interno de varias librerías y TypeScript 6 dejó de incluir tipos globales por defecto, lo que obligó a corregir \texttt{tsconfig.\allowbreak{}json} (cambio 6). En un proyecto que dure varios semestres, actualizar dependencias requiere tiempo dedicado.
+Una aplicación React Native depende de una cadena de versiones que deben coincidir: Expo SDK, React Native, React, cada librería con código nativo y la versión de Expo Go instalada en el teléfono, que solo abre proyectos de su mismo SDK. Fue obligatorio instalar las dependencias con el instalador de Expo para no romper esa cadena. El ritmo de cambios también se notó: el SafeAreaView del núcleo figura como obsoleto [16], la Nueva Arquitectura cambió el comportamiento interno de varias librerías y TypeScript 6 dejó de incluir tipos globales por defecto, lo que obligó a corregir la configuración (cambio 6). En un proyecto que dure varios semestres, actualizar dependencias requiere tiempo dedicado.
 
 \subsubtitulo{B. Layout limitado a Flexbox y diferencias entre plataformas}
 
-React Native solo ofrece Flexbox y posición absoluta: no hay CSS Grid ni \textit{media queries}. La cuadrícula del horario tuvo que calcularse a mano con \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} y \texttt{position: 'absolute'}, y la rejilla adaptable de laboratorios obligó a volver a montar la \texttt{Flat\allowbreak{}List} con \texttt{key} porque \texttt{num\allowbreak{}Columns} no puede cambiar en caliente. Algunos componentes se comportan distinto en cada sistema (\texttt{Keyboard\allowbreak{}Avoiding\allowbreak{}View}, sombras, ripple) y hay que probar en ambos. Además, la depuración de lo que ocurre del lado nativo exige conocer las herramientas de Android: los permisos de cámara de Expo Go, el teclado del emulador y la rotación tuvieron que resolverse con adb.
-
-\vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{5.3 Valoración general}
-\colabtitle{5.3 Valoración general}
-
-\begin{table}[H]
-\centering\small
-\caption{Resumen de la apreciación de React Native con Expo}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.280\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.160\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.560\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
-\hline
-\rowcolor{colabpyblue} \color{white}\textbf{Aspecto} & \color{white}\textbf{Valoración} & \color{white}\textbf{Evidencia en el laboratorio} \\ \hline
-Componentes propios de la plataforma & Favorable & Switch, Alert, Share, teclado y pila de navegación nativos en Android. \\ \hline
-\rowcolor{colabpybg} Productividad & Favorable & Fast Refresh, Expo Go, TypeScript y pruebas del dominio en 1 s. \\ \hline
-Mantenimiento de versiones & Desfavorable & Cadena SDK–RN–librerías–Expo Go; APIs obsoletas; ajuste de tsconfig. \\ \hline
-\rowcolor{colabpybg} Sistema de layout & Desfavorable & Sin Grid ni media queries; horario y rejilla calculados a mano. \\ \hline
-\end{tabular}
-\end{table}
+React Native solo ofrece Flexbox y posición absoluta: no hay CSS Grid ni \textit{media queries}. La cuadrícula del horario tuvo que calcularse a mano con las dimensiones de la ventana y posición absoluta, y la rejilla adaptable de laboratorios obligó a volver a crear la lista al cambiar de ancho. Algunos componentes se comportan distinto en cada sistema (teclado, sombras, ripple) y hay que probar en ambos. Además, lo que ocurre del lado nativo exige conocer las herramientas de Android: los permisos de cámara de Expo Go, el teclado del emulador y la rotación tuvieron que resolverse desde la línea de comandos del emulador.
 

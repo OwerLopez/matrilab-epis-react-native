@@ -17,7 +17,7 @@ from docx.shared import Cm, Pt, RGBColor
 ROJO = RGBColor(0xE6, 0x19, 0x2D)
 AZUL = RGBColor(0x19, 0x37, 0x5A)
 GRIS = RGBColor(0x55, 0x55, 0x55)
-MARCAS = re.compile(r"(\*\*[^*]+\*\*|\*[^*\s][^*]*\*|`[^`]+`|<https?://[^>]+>)")
+MARCAS = re.compile(r"(@ref\{[^}]+\}|\*\*[^*]+\*\*|\*[^*\s][^*]*\*|`[^`]+`|<https?://[^>]+>)")
 
 
 # ------------------------------------------------------------------ modelo
@@ -34,7 +34,7 @@ class Informe:
     def p(self, t): self._b("p", t)
     def lista(self, items, numerada=False): self._b("lista", items, numerada)
     def figura(self, ruta, leyenda, ancho=0.95, etiqueta=None): self._b("fig", ruta, leyenda, ancho, etiqueta)
-    def tabla(self, leyenda, cabecera, filas, anchos, tam="small"): self._b("tab", leyenda, cabecera, filas, anchos, tam)
+    def tabla(self, leyenda, cabecera, filas, anchos, tam="small", etiqueta=None): self._b("tab", leyenda, cabecera, filas, anchos, tam, etiqueta)
     def codigo(self, texto, titulo=None, leng="TSX"): self._b("cod", texto.strip("\n"), titulo, leng)
     def archivo(self, ruta, titulo): self._b("arch", ruta, titulo)
     def nota(self, t, tipo="info", comentario=None): self._b("nota", t, tipo, comentario)
@@ -64,7 +64,9 @@ def tex(t):
     for parte in MARCAS.split(t):
         if not parte:
             continue
-        if parte.startswith("**"):
+        if parte.startswith("@ref{"):
+            out.append(r"\ref{" + parte[5:-1] + "}")
+        elif parte.startswith("**"):
             out.append(r"\textbf{" + tex(parte[2:-2]) + "}")
         elif parte.startswith("`"):
             out.append(r"\texttt{" + esc_tt(parte[1:-1]) + "}")
@@ -113,16 +115,16 @@ def a_latex(inf, carpeta, raiz_codigo):
             f.write(f"\\begin{{{entorno}}}{opc}\n" + "".join(f"    \\item {tex(i)}\n" for i in b[1]) + f"\\end{{{entorno}}}\n\n")
         elif k == "fig":
             _, ruta, ley, ancho, et = b
-            f.write("\\begin{figure}[H]\n\\centering\n"
+            f.write("\\begin{figure}[!htbp]\n\\centering\n"
                     f"\\safeimage{{{ancho}\\textwidth}}{{{ruta}}}{{{esc(ley)}}}\n"
                     f"\\caption{{{tex(ley)}}}\n" + (f"\\label{{{et}}}\n" if et else "") + "\\end{figure}\n\n")
         elif k == "tab":
-            _, ley, cab, filas, anchos, tam = b
+            _, ley, cab, filas, anchos, tam, et = b
             cols = "|" + "|".join(f">{{\\raggedright\\arraybackslash}}p{{\\dimexpr {a:.3f}\\linewidth-2\\tabcolsep-2\\arrayrulewidth\\relax}}" for a in anchos) + "|"
             enc = " & ".join(f"\\color{{white}}\\textbf{{{tex(c)}}}" for c in cab)
             # Todas las tablas del informe caben en una página: se componen como un bloque indivisible
             # con su leyenda arriba, igual que una tabla flotante [H].
-            f.write(f"\\begin{{table}}[H]\n\\centering\\{tam}\n\\caption{{{tex(ley)}}}\n\\renewcommand{{\\arraystretch}}{{1.25}}\n"
+            f.write(f"\\begin{{table}}[H]\n\\centering\\{tam}\n\\caption{{{tex(ley)}}}" + (f"\\label{{{et}}}" if et else "") + f"\n\\renewcommand{{\\arraystretch}}{{1.25}}\n"
                     f"\\begin{{tabular}}{{{cols}}}\n\\hline\n\\rowcolor{{colabpyblue}} {enc} \\\\ \\hline\n")
             for i, fila in enumerate(filas):
                 color = "\\rowcolor{colabpybg} " if i % 2 else ""
@@ -428,7 +430,7 @@ class Docx:
                 p.add_run().add_picture(str(Path(raiz_img) / ruta), width=Cm(w))
                 self.leyenda("Figura", ley)
             elif k == "tab":
-                _, ley, cab, filas, anchos, tam = b
+                _, ley, cab, filas, anchos, tam = b[:6]
                 self.leyenda("Tabla", ley, antes=True)
                 t = doc.add_table(rows=1, cols=len(cab))
                 t.alignment = WD_TABLE_ALIGNMENT.CENTER

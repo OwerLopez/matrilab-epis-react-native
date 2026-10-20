@@ -6,11 +6,11 @@
 \phantomsection\addcontentsline{toc}{subsection}{2.1 Funcionalidades derivadas del árbol de objetivos}
 \colabtitle{2.1 Funcionalidades derivadas del árbol de objetivos}
 
-Cada medio fundamental del árbol de objetivos se descompuso en funcionalidades concretas. La Tabla 4 muestra esa trazabilidad, que es la base del diseño: ninguna pantalla se agregó sin un medio que la justifique.
+Cada medio fundamental del árbol de objetivos se descompuso en funcionalidades concretas (Tabla \ref{tab:trazabilidad}). Ninguna pantalla se agregó sin un medio que la justifique.
 
 \begin{table}[H]
 \centering\small
-\caption{Trazabilidad entre medios del árbol de objetivos, funcionalidades e interfaces}
+\caption{Trazabilidad entre medios del árbol de objetivos, funcionalidades e interfaces}\label{tab:trazabilidad}
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.240\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.530\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.230\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
 \hline
@@ -35,9 +35,9 @@ Transversal & F-13 Elegir tema claro u oscuro, ajustar avisos y cerrar sesión &
 \phantomsection\addcontentsline{toc}{subsection}{2.2 Mapa de navegación}
 \colabtitle{2.2 Mapa de navegación}
 
-La estructura de navegación se definió antes de dibujar las pantallas (Figura 3). Una \textbf{pila nativa} raíz contiene el inicio de sesión, tres navegadores de \textbf{pestañas inferiores} (uno por rol) y tres pantallas que se apilan sobre las pestañas: el detalle del grupo, que se presenta como hoja modal, el pase QR y la nómina. Así cada rol ve solo sus opciones y el botón Atrás del sistema se comporta como el usuario espera.
+La estructura de navegación se definió antes de dibujar las pantallas (Figura \ref{fig:navegacion}). Una \textbf{pila nativa} raíz contiene el inicio de sesión, tres navegadores de \textbf{pestañas inferiores} (uno por rol) y tres pantallas que se apilan encima: el detalle del grupo, que se presenta como hoja modal, el pase QR y la nómina. Cada rol ve solo sus opciones y el botón Atrás del sistema se comporta como el usuario espera.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \safeimage{1.0\textwidth}{img/diagramas/navegacion.png}{Mapa de navegación de MatriLab: pila nativa raíz y pestañas por rol}
 \caption{Mapa de navegación de MatriLab: pila nativa raíz y pestañas por rol}
@@ -48,22 +48,20 @@ La estructura de navegación se definió antes de dibujar las pantallas (Figura 
 \phantomsection\addcontentsline{toc}{subsection}{2.3 Sistema visual}
 \colabtitle{2.3 Sistema visual}
 
-Para que las doce interfaces se vean consistentes se definieron \textit{tokens} de diseño en \texttt{src/\allowbreak{}theme/\allowbreak{}tokens.\allowbreak{}ts}. Se conservaron los colores institucionales usados desde el LAB 01 y se definió una variante oscura de cada color, ya que la aplicación sigue el tema del sistema operativo.
+Para que las doce interfaces sean consistentes se definieron colores, espacios y tamaños de texto comunes. Se conservaron los colores institucionales usados desde el LAB 01 y se definió una variante oscura de cada color, porque la aplicación sigue el tema del sistema operativo.
 
 \begin{table}[H]
 \centering\small
-\caption{Tokens de diseño de la aplicación}
+\caption{Tokens de diseño de la aplicación}\label{tab:tokens}
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.200\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.270\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.200\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.330\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.200\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.300\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.180\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.320\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
 \hline
 \rowcolor{colabpyblue} \color{white}\textbf{Token} & \color{white}\textbf{Claro} & \color{white}\textbf{Oscuro} & \color{white}\textbf{Uso} \\ \hline
 primario & \#19375A & \#7FA7D9 & Botones principales, cabeceras de tarjetas, grupo seleccionado. \\ \hline
 \rowcolor{colabpybg} marca & \#C3141E & \#FF6B6B & Acciones decisivas (Ingresar, Confirmar matrícula) y pestaña activa. \\ \hline
 éxito / alerta / peligro & \#1E7B45 / \#A35F00 / \#B3261E & variantes claras & Semáforo de vacantes: verde, ámbar y rojo. \\ \hline
 \rowcolor{colabpybg} fondo / superficie & \#F4F6F9 / \#FFFFFF & \#0F1720 / \#17212C & Fondo de pantalla y de tarjetas. \\ \hline
-espacio & 4 · 8 · 12 · 16 · 24 · 32 & igual & Escala de 4 pt para márgenes, rellenos y \texttt{gap}. \\ \hline
-\rowcolor{colabpybg} radio & 8 · 12 · 16 · 999 & igual & Esquinas de controles, tarjetas y píldoras. \\ \hline
-tipo & 26 · 18 · 15 · 13 · 12 & igual & Título, subtítulo, cuerpo, etiqueta y pie (en dp). \\ \hline
+espacio y radio & 4 · 8 · 12 · 16 · 24 · 32 / 8 · 12 · 16 & igual & Márgenes, rellenos, separación entre elementos y esquinas. \\ \hline
 \end{tabular}
 \end{table}
 
@@ -71,29 +69,29 @@ tipo & 26 · 18 · 15 · 13 · 12 & igual & Título, subtítulo, cuerpo, etiquet
 \phantomsection\addcontentsline{toc}{subsection}{2.4 Mockups de baja fidelidad}
 \colabtitle{2.4 Mockups de baja fidelidad}
 
-Con las funcionalidades y la navegación definidas se dibujaron mockups de baja fidelidad para las doce interfaces (Figuras 4 y 5). Se usaron solo grises, sin textos reales, para discutir la \textbf{organización} de cada pantalla antes que su apariencia. Cada región lleva una etiqueta roja con el componente de React Native previsto y los recuadros discontinuos marcan contenedores de layout (filas, columnas o listas). Ese mismo boceto guió luego la implementación: en la sección 4.6 cada mockup aparece junto a la captura real de la pantalla.
+Con las funcionalidades y la navegación definidas se dibujaron mockups de baja fidelidad de las doce interfaces (Figuras \ref{fig:mockups_e} y \ref{fig:mockups_d}). Se usaron solo grises, sin textos reales, para discutir la \textbf{organización} de cada pantalla antes que su apariencia. Cada región lleva una etiqueta roja con el componente de React Native previsto y los recuadros discontinuos marcan contenedores de layout. En la sección 4 cada mockup aparece junto a la captura real de la pantalla.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \safeimage{0.8\textwidth}{img/diagramas/mockups_estudiante.png}{Mockups de baja fidelidad de las interfaces del estudiante (I1 a I6)}
 \caption{Mockups de baja fidelidad de las interfaces del estudiante (I1 a I6)}
 \label{fig:mockups_e}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \safeimage{0.8\textwidth}{img/diagramas/mockups_docente_admin.png}{Mockups de baja fidelidad de las interfaces del docente y de administración (I7 a I12)}
 \caption{Mockups de baja fidelidad de las interfaces del docente y de administración (I7 a I12)}
 \label{fig:mockups_d}
 \end{figure}
 
-Las decisiones de organización más importantes que quedaron fijadas en los mockups fueron las siguientes:
+Las decisiones de organización que quedaron fijadas en los mockups fueron:
 
 \begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
-    \item \textbf{Listas largas virtualizadas.} El catálogo, el panel docente, la nómina y los laboratorios se planificaron como \texttt{Section\allowbreak{}List} o \texttt{Flat\allowbreak{}List}, nunca como un \texttt{Scroll\allowbreak{}View} con muchos hijos.
-    \item \textbf{Acción principal fija.} En el detalle del grupo y en la nómina el botón principal queda en un pie fuera del área desplazable, siempre visible.
-    \item \textbf{Superposiciones con posición absoluta.} El sello del pase, la guía de encuadre del escáner y los bloques del horario se colocan con \texttt{position: 'absolute'} sobre su contenedor.
-    \item \textbf{Cuadrículas que se reacomodan.} Los indicadores (KPI) y el mapa de puestos usan \texttt{flex\allowbreak{}Wrap}, de modo que el número de columnas depende del ancho disponible y no de valores fijos.
+    \item \textbf{Listas largas virtualizadas.} El catálogo, el panel docente, la nómina y los laboratorios se planificaron como listas que solo dibujan lo visible, no como un desplazamiento simple con muchos elementos.
+    \item \textbf{Acción principal fija.} En el detalle del grupo y en la nómina el botón principal queda en un pie fuera del área desplazable, siempre a la vista.
+    \item \textbf{Superposiciones.} El sello del pase, la guía de encuadre del escáner y los bloques del horario se colocan con posición absoluta sobre su contenedor.
+    \item \textbf{Cuadrículas que se reacomodan.} Los indicadores y el mapa de puestos saltan de línea solos, de modo que el número de columnas depende del ancho disponible.
 \end{itemize}
 
 \vspace{0.2cm}
@@ -101,10 +99,10 @@ Las decisiones de organización más importantes que quedaron fijadas en los moc
 \colabtitle{2.5 Criterios de usabilidad y accesibilidad}
 
 \begin{itemize}[label=\textcolor{unsared}{\textbullet}, leftmargin=*]
-    \item Área táctil mínima de \textbf{48 dp} en botones y campos (\texttt{min\allowbreak{}Height: 48}), y \texttt{hit\allowbreak{}Slop} en iconos pequeños.
-    \item Todos los controles tienen \texttt{accessibility\allowbreak{}Label} y \texttt{accessibility\allowbreak{}Role}; las filas de la nómina se anuncian como casillas (\texttt{accessibility\allowbreak{}Role=\allowbreak{}"checkbox"}) con su estado.
-    \item Los mensajes de error y de validación usan \texttt{accessibility\allowbreak{}Live\allowbreak{}Region} para que el lector de pantalla los lea al aparecer.
-    \item El semáforo nunca depende solo del color: siempre va acompañado del texto \textit{Disponible}, \textit{Últimos cupos} o \textit{Agotado}.
-    \item Tema claro y oscuro con contraste suficiente; la escala de texto del sistema (\texttt{font\allowbreak{}Scale}) se respeta y se muestra en el perfil.
+    \item Área táctil mínima de \textbf{48 dp} en botones y campos.
+    \item Cada control tiene una etiqueta de accesibilidad; las filas de la nómina se anuncian como casillas con su estado.
+    \item Los mensajes de error y validación se leen automáticamente al aparecer.
+    \item El semáforo nunca depende solo del color: siempre lleva el texto \textit{Disponible}, \textit{Últimos cupos} o \textit{Agotado}.
+    \item Tema claro y oscuro con contraste suficiente; se respeta la escala de texto del sistema.
 \end{itemize}
 

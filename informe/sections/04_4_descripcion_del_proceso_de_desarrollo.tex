@@ -8,67 +8,51 @@
 
 \begin{table}[H]
 \centering\small
-\caption{Entorno de desarrollo y ejecución}
+\caption{Entorno de desarrollo y ejecución}\label{tab:entorno}
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.280\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.720\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.300\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.700\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
 \hline
 \rowcolor{colabpyblue} \color{white}\textbf{Elemento} & \color{white}\textbf{Detalle} \\ \hline
-Sistema operativo & Windows 11 Pro \\ \hline
-\rowcolor{colabpybg} Editor & Visual Studio Code \\ \hline
-Node.js / npm & 22.14.0 / 10.9.2 \\ \hline
-\rowcolor{colabpybg} Expo CLI & 58.1.13 (proyecto con Expo SDK 58) \\ \hline
-Emulador & Android Studio · Pixel 7a · Android 16 (API 36) · 1080 × 2400 px, 420 dpi (411 × 914 dp) \\ \hline
-\rowcolor{colabpybg} Cliente de ejecución & Expo Go 58.0.5 en el emulador \\ \hline
-Control de versiones & Git y GitHub \\ \hline
+Sistema operativo y editor & Windows 11 Pro · Visual Studio Code \\ \hline
+\rowcolor{colabpybg} Node.js / npm & 22.14.0 / 10.9.2 \\ \hline
+Framework & React Native 0.88 · React 19.3 · Expo SDK 58 (CLI 58.1.13) · TypeScript 6.0 \\ \hline
+\rowcolor{colabpybg} Emulador & Android Studio · Pixel 7a · Android 16 (API 36) · 1080 × 2400 px, 420 dpi (411 × 914 dp) \\ \hline
+Cliente de ejecución & Expo Go 58.0.5 instalado en el emulador \\ \hline
+\rowcolor{colabpybg} Control de versiones y despliegue & Git, GitHub y GitHub Actions con GitHub Pages \\ \hline
 \end{tabular}
 \end{table}
 
 \vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{4.2 Creación del proyecto y estructura}
-\colabtitle{4.2 Creación del proyecto y estructura}
+\phantomsection\addcontentsline{toc}{subsection}{4.2 Creación y ejecución del proyecto}
+\colabtitle{4.2 Creación y ejecución del proyecto}
 
-El proyecto se creó con la plantilla en blanco de TypeScript de Expo y se agregaron las dependencias con \texttt{npx expo install}, que elige versiones compatibles con el SDK instalado:
+El proyecto se creó con la plantilla en blanco de TypeScript de Expo y las dependencias se instalaron con el instalador de Expo, que elige versiones compatibles con el SDK. Para ejecutar la aplicación se inicia el servidor \textbf{Metro}, que empaqueta el código y lo sirve al dispositivo. La Figura \ref{fig:metro} muestra la consola de Metro con el código QR para abrir el proyecto en Expo Go y los atajos de teclado: \textit{a} abre el emulador Android, \textit{w} la versión web y \textit{r} recarga la aplicación.
 
-\needspace{10\baselineskip}
-\begin{lstlisting}[language=bash, title={Creación del proyecto e instalación de dependencias}]
-npx create-expo-app@latest matrilab-rn --template blank-typescript
-cd matrilab-rn
-npx expo install @react-navigation/native @react-navigation/native-stack \
-  @react-navigation/bottom-tabs react-native-screens react-native-safe-area-context \
-  react-native-svg react-native-qrcode-svg expo-camera @expo/vector-icons
-npx expo install react-native-web react-dom @expo/metro-runtime
-npx expo install jest-expo jest @types/jest -- --save-dev
-\end{lstlisting}
-\par\penalty-100
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.62\textwidth}{img/proceso/01_metro_expo_start.png}{Servidor Metro iniciado con npx expo start: QR para Expo Go y menú de atajos}
+\caption{Servidor Metro iniciado con npx expo start: QR para Expo Go y menú de atajos}
+\label{fig:metro}
+\end{figure}
 
-El código se organizó por responsabilidad: dominio sin dependencias de React, estado, tema, componentes reutilizables, navegación y una carpeta de pantallas por rol.
+En el emulador, Expo Go detecta el servidor de desarrollo en la red local y muestra el proyecto \textit{MatriLab EPIS} listo para abrirse; al tocarlo descarga el paquete desde Metro y ejecuta la aplicación. Cada cambio guardado en el editor se refleja en uno o dos segundos gracias a \textit{Fast Refresh}, sin perder el estado de la pantalla. Expo Go ofrece además un menú de desarrollo con recarga, inspector de elementos, monitor de rendimiento y herramientas de depuración (Figura \ref{fig:entorno}).
 
-\needspace{17\baselineskip}
-\begin{lstlisting}[language=Texto, title={Estructura de carpetas del proyecto}]
-matrilab-rn/
-|-- App.tsx                  # proveedores: área segura, tema, estado y navegación
-|-- app.json                 # configuración de Expo (nombre, orientación, permisos)
-|-- src/
-|   |-- domain/              # types.ts, reglas.ts (reglas puras), datos.ts (2026-B)
-|   |-- state/AppStore.tsx   # Context + useReducer y selectores
-|   |-- theme/               # tokens.ts y ThemeContext.tsx
-|   |-- components/ui.tsx    # Tarjeta, Boton, Chip, Insignia, BarraProgreso, Kpi...
-|   |-- navigation/          # RootNavigator.tsx y tipos.ts
-|   `-- screens/             # LoginScreen, PerfilScreen y carpetas estudiante/,
-|                            # docente/ y admin/ con las demás interfaces
-|-- __tests__/reglas.test.ts # 31 pruebas unitarias
-|-- herramientas/capturas-android.mjs  # recorrido automático de capturas
-`-- informe/                 # este informe: LaTeX, DOCX, figuras y generadores
-\end{lstlisting}
-\par\penalty-100
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.438\textwidth}{img/figuras/fig_entorno.png}{Expo Go en el emulador: (a) servidor de desarrollo MatriLab EPIS detectado en la red local, (b) menú de desarrollo}
+\caption{Expo Go en el emulador: (a) servidor de desarrollo MatriLab EPIS detectado en la red local, (b) menú de desarrollo}
+\label{fig:entorno}
+\end{figure}
+
+El código se organizó por responsabilidad: un \textbf{dominio} con las reglas de negocio sin dependencias de React, un \textbf{estado} global, un \textbf{tema} con las paletas clara y oscura, \textbf{componentes} visuales reutilizables, la \textbf{navegación} y una carpeta de \textbf{pantallas} por rol.
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{4.3 Arquitectura}
 \colabtitle{4.3 Arquitectura}
 
-La aplicación se dividió en capas (Figura 7). La capa de presentación solo conoce el estado a través de hooks; el estado aplica las reglas del dominio, y el dominio está formado por funciones puras que no importan nada de React ni de la plataforma. Esa separación permitió probar las reglas de negocio con Jest en un segundo, sin emulador.
+La Figura \ref{fig:arquitectura} muestra las capas. La presentación solo conoce el estado a través de hooks; el estado aplica las reglas del dominio, y el dominio está formado por funciones puras que no dependen de React ni de la plataforma. Esa separación permitió probar las reglas de negocio en un segundo, sin emulador.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
 \safeimage{1.0\textwidth}{img/diagramas/arquitectura.png}{Arquitectura por capas de MatriLab EPIS}
 \caption{Arquitectura por capas de MatriLab EPIS}
@@ -76,555 +60,342 @@ La aplicación se dividió en capas (Figura 7). La capa de presentación solo co
 \end{figure}
 
 \vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{4.4 Modelo de dominio y reglas de negocio}
-\colabtitle{4.4 Modelo de dominio y reglas de negocio}
+\phantomsection\addcontentsline{toc}{subsection}{4.4 Reglas de negocio}
+\colabtitle{4.4 Reglas de negocio}
 
-Los horarios se guardan en minutos desde la medianoche (por ejemplo, 07:00 es 420). Con esa representación la regla RN-02 de cruce de horario se reduce a comparar intervalos; los extremos no cuentan, de modo que un bloque que termina a las 08:40 no choca con otro que empieza a las 08:40.
+Los horarios se representan en minutos desde la medianoche, lo que reduce la regla de cruce a comparar intervalos. La Tabla \ref{tab:reglas} resume las reglas que la aplicación aplica antes de confirmar una matrícula, en el mismo orden del proceso BPMN del LAB 01. Cada una produce un mensaje distinto en la pantalla del detalle del grupo.
 
-\needspace{14\baselineskip}
-\begin{lstlisting}[language=TSX, title={src/domain/reglas.ts · cruce de horario y semáforo}]
-/** RN-02: dos bloques se cruzan si comparten día y sus intervalos se solapan (los extremos no cuentan). */
-export function haySolape(a: Bloque, b: Bloque): boolean {
-  return a.dia === b.dia && a.inicio < b.fin && b.inicio < a.fin;
-}
-
-/** Semáforo de vacantes: rojo sin cupo, ámbar con menos del 30 % libre, verde en otro caso. */
-export function semaforo(t: Turno): Semaforo {
-  const libres = cuposLibres(t);
-  if (libres === 0) return 'rojo';
-  return libres / t.cuposTotales < 0.3 ? 'ambar' : 'verde';
-}
-\end{lstlisting}
-\par\penalty-100
-
-\texttt{validar\allowbreak{}Matricula} aplica los controles en el mismo orden del proceso BPMN del LAB 01 y devuelve el primer motivo de rechazo con un mensaje legible: ventana cerrada, grupo ya matriculado, otro grupo del mismo curso, límite de laboratorios, cruce con un laboratorio, cruce con la teoría y grupo sin cupo. La reserva se hace con una función inmutable: si entre la consulta y la confirmación el cupo se agotó, no modifica nada.
-
-\needspace{11\baselineskip}
-\begin{lstlisting}[language=TSX, title={src/domain/reglas.ts · reserva atómica del cupo (RF-05)}]
-export function reservarCupo(turnos: Turno[], turnoId: string): { turnos: Turno[]; reservado: boolean } {
-  const objetivo = turnos.find((t) => t.id === turnoId);
-  if (!objetivo || cuposLibres(objetivo) === 0) return { turnos, reservado: false };
-  return {
-    reservado: true,
-    turnos: turnos.map((t) => (t.id === turnoId ? { ...t, cuposOcupados: t.cuposOcupados + 1 } : t)),
-  };
-}
-\end{lstlisting}
-\par\penalty-100
-
-El pase QR contiene la cadena \texttt{MATRILAB|matrícula|grupo|estudiante|huella}. La huella es un FNV-1a de 32 bits sobre los cuatro primeros campos: si alguien altera el contenido, la huella deja de coincidir y el escáner rechaza el pase. No pretende ser un mecanismo criptográfico; en producción la verificación debe hacerse en el servidor.
+\begin{table}[H]
+\centering\small
+\caption{Reglas de negocio aplicadas al confirmar una matrícula}\label{tab:reglas}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.080\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.220\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.500\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.200\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\hline
+\rowcolor{colabpyblue} \color{white}\textbf{Orden} & \color{white}\textbf{Regla} & \color{white}\textbf{Comportamiento} & \color{white}\textbf{Se ve en} \\ \hline
+1 & Ventana de matrícula & Fuera de la fecha de apertura y cierre no se puede confirmar. & I2, I11 \\ \hline
+\rowcolor{colabpybg} 2 & Grupo ya matriculado & No se puede tomar dos veces el mismo grupo. & I4 \\ \hline
+3 & Un grupo por curso & Rechaza un segundo grupo del mismo curso. & Figura \ref{fig:oscuro} (c) \\ \hline
+\rowcolor{colabpybg} 4 & Límite de laboratorios & Máximo configurable por estudiante (4 por defecto). & I2, I11 \\ \hline
+5 & RN-02 cruce de horario & Rechaza el grupo si se solapa con otro laboratorio o con la teoría inscrita; los extremos no cuentan. & Figura \ref{fig:i04} (c) \\ \hline
+\rowcolor{colabpybg} 6 & Cupo disponible & Sin vacantes el botón de confirmación queda deshabilitado. & Figura \ref{fig:i04} (d) \\ \hline
+7 & Reserva atómica & El cupo se descuenta y la matrícula se registra en una sola operación; nunca se supera el aforo. & I2, I3 \\ \hline
+\rowcolor{colabpybg} 8 & Pase verificable & El QR lleva una huella de los datos; si se altera, el escáner lo rechaza. & Figura \ref{fig:i09} (d) \\ \hline
+\end{tabular}
+\end{table}
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{4.5 Estado global, tema y componentes propios}
 \colabtitle{4.5 Estado global, tema y componentes propios}
 
-El estado se maneja con \texttt{use\allowbreak{}Reducer} dentro de un contexto. El reductor es la única puerta para cambiar los cupos: la acción \texttt{MATRICULAR} reserva el cupo y registra la matrícula en la misma transición, lo que en la interfaz garantiza que dos toques seguidos no ocupen dos puestos.
-
-\needspace{14\baselineskip}
-\begin{lstlisting}[language=TSX, title={src/state/AppStore.tsx · acción MATRICULAR}]
-case 'MATRICULAR': {
-  if (!e.usuario) return e;
-  const { turnos, reservado } = reservarCupo(e.turnos, a.turnoId);
-  if (!reservado) return e;
-  const id = `M-${String(e.matriculas.length + 1).padStart(4, '0')}`;
-  return {
-    ...e,
-    turnos,
-    matriculas: [...e.matriculas, { id, estudianteId: e.usuario.id, turnoId: a.turnoId, fecha: a.ahora, codigo: id, estado: 'confirmada' }],
-  };
-}
-\end{lstlisting}
-\par\penalty-100
-
-Los componentes visuales propios se construyeron solo con primitivas del núcleo. El botón, por ejemplo, es un \texttt{Pressable} cuyo estilo depende de la variante y del estado \texttt{pressed}, con ripple nativo en Android y estados de accesibilidad:
-
-\needspace{16\baselineskip}
-\begin{lstlisting}[language=TSX, title={src/components/ui.tsx · componente Boton}]
-<Pressable
-  onPress={onPress}
-  disabled={deshabilitado || cargando}
-  accessibilityRole="button"
-  accessibilityLabel={accessibilityLabel ?? titulo}
-  accessibilityState={{ disabled: Boolean(deshabilitado), busy: Boolean(cargando) }}
-  android_ripple={{ color: 'rgba(255,255,255,0.25)' }}
-  style={({ pressed }) => [
-    estilos.boton,
-    { backgroundColor: fondo, borderColor: variante === 'fantasma' ? c.borde : fondo, opacity: deshabilitado ? 0.45 : pressed ? 0.85 : 1 },
-    style,
-  ]}
->
-\end{lstlisting}
-\par\penalty-100
+El estado de la aplicación (usuario, grupos, matrículas, laboratorios, configuración y asistencias) se mantiene en un único almacén construido con el contexto y un reductor de React. El reductor es la única vía para cambiar los cupos, de modo que dos toques seguidos en \textit{Confirmar matrícula} no ocupan dos puestos. El tema sigue al sistema operativo, aunque el usuario puede fijar el modo claro u oscuro desde su perfil; al cambiarlo se repinta toda la aplicación (Anexo A). Los componentes visuales propios (tarjeta, botón, chip, insignia, barra de progreso, indicador, fila de ajuste, avatar y estado vacío) se construyeron solo con primitivas del núcleo y se reutilizan en las doce pantallas.
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{4.6 Desarrollo de las interfaces}
 \colabtitle{4.6 Desarrollo de las interfaces}
 
-A continuación se describe cada interfaz. En cada figura, el panel (a) es el mockup de la sección 2.4, el panel (b) es la captura real en el emulador Android y, cuando existe, el panel (c) muestra un estado alternativo de la misma pantalla.
+Se describe cada interfaz con sus capturas en el emulador Android. En cada figura el panel (a) es el mockup de la sección 2.4 y los siguientes muestran la pantalla real en distintos estados.
 
 \subsubtitulo{I1 · Inicio de sesión institucional}
 
-\begin{figure}[H]
+\textbf{Elementos.} Pantalla de entrada con la marca sobre el color primario y una tarjeta blanca centrada. Contiene el logotipo de la EPIS, los campos de correo y contraseña con iconos, el botón para mostrar u ocultar la contraseña, el interruptor \textit{Mantener la sesión iniciada}, el botón \textbf{Ingresar} y tres accesos de demostración por rol. Si el correo no termina en @unsa.edu.pe aparece el mensaje de error del panel (c).
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i01.png}{Inicio de sesión: (a) mockup, (b) pantalla inicial, (c) validación del dominio institucional}
-\caption{Inicio de sesión: (a) mockup, (b) pantalla inicial, (c) validación del dominio institucional}
+\safeimage{0.895\textwidth}{img/figuras/fig_i01.png}{Inicio de sesión: (a) mockup, (b) pantalla inicial, (c) validación del dominio institucional, (d) formulario con el teclado abierto y la contraseña visible}
+\caption{Inicio de sesión: (a) mockup, (b) pantalla inicial, (c) validación del dominio institucional, (d) formulario con el teclado abierto y la contraseña visible}
+\label{fig:i01}
 \end{figure}
 
-\textbf{Elementos.} Pantalla de entrada con la marca sobre el color primario y una tarjeta blanca centrada. Contiene el logotipo de la EPIS, los campos de correo y contraseña con iconos, el botón para mostrar u ocultar la contraseña, el interruptor \textit{Mantener la sesión iniciada}, el botón \textbf{Ingresar} y tres accesos de demostración por rol. Al ingresar un correo que no termina en \texttt{@unsa.\allowbreak{}edu.\allowbreak{}pe} aparece el mensaje de error del panel (c).
+\textbf{Componentes y layout.} La tarjeta está centrada verticalmente dentro de un contenedor desplazable y tiene un ancho máximo para no estirarse en tabletas ni en la web. Cuando aparece el teclado (panel d), KeyboardAvoidingView reduce el espacio disponible y el formulario sube, de modo que el campo activo sigue visible. Los tres accesos de demostración son una fila de botones que se reparten el ancho por igual. Como el fondo es oscuro, la barra de estado del sistema se pinta en claro.
 
-\textbf{Componentes y layout.} La pantalla combina \texttt{Safe\allowbreak{}Area\allowbreak{}View} (márgenes seguros), \texttt{Keyboard\allowbreak{}Avoiding\allowbreak{}View} y un \texttt{Scroll\allowbreak{}View} con \texttt{flex\allowbreak{}Grow: 1} y \texttt{justify\allowbreak{}Content: 'center'}, de modo que el formulario queda centrado pero sube cuando aparece el teclado. La tarjeta tiene \texttt{width: '100\%'} con \texttt{max\allowbreak{}Width: 440} para no estirarse en tabletas ni en la web. Los tres accesos de demostración son una fila (\texttt{flex\allowbreak{}Direction: 'row'}) de botones con \texttt{flex: 1}, que se reparten el ancho por igual. Como el fondo es oscuro, la pantalla fija \texttt{<Status\allowbreak{}Bar style=\allowbreak{}"light" /\allowbreak{}>}.
-
-\needspace{12\baselineskip}
-\begin{lstlisting}[language=TSX, title={LoginScreen.tsx · validación del formulario}]
-const validar = () => {
-  const limpio = correo.trim().toLowerCase();
-  if (!/^[a-z0-9._-]+@unsa\.edu\.pe$/.test(limpio)) return setError('Usa tu correo institucional @unsa.edu.pe.');
-  if (clave.length < 6) return setError('La contraseña debe tener al menos 6 caracteres.');
-  const u = USUARIOS.find((x) => x.correo === limpio);
-  if (!u || clave !== CLAVE_DEMO) return setError('Correo o contraseña incorrectos.');
-  setError(null);
-  entrar(u);
-};
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I2 · Panel del estudiante}
 
-\begin{figure}[H]
+\textbf{Elementos.} Muestra el saludo con avatar e iniciales, la tarjeta con el estado de la ventana de matrícula y su fecha de cierre, cuatro indicadores (laboratorios matriculados, créditos, vacantes libres en la oferta y laboratorios que aún puede tomar) y la lista \textit{Mis laboratorios}. Cada matrícula tiene una franja con el color del curso y los botones \textbf{Ver pase QR} y \textbf{Anular}.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i02.png}{Panel del estudiante: (a) mockup, (b) tema claro, (c) tema oscuro después de matricularse en Plataformas Emergentes}
-\caption{Panel del estudiante: (a) mockup, (b) tema claro, (c) tema oscuro después de matricularse en Plataformas Emergentes}
+\safeimage{0.666\textwidth}{img/figuras/fig_i02.png}{Panel del estudiante: (a) mockup, (b) tema claro con una matrícula, (c) tema oscuro después de matricularse en Plataformas Emergentes}
+\caption{Panel del estudiante: (a) mockup, (b) tema claro con una matrícula, (c) tema oscuro después de matricularse en Plataformas Emergentes}
+\label{fig:i02}
 \end{figure}
 
-\textbf{Elementos.} Muestra el saludo con avatar e iniciales, una tarjeta con el estado de la ventana de matrícula y su fecha de cierre, cuatro indicadores (laboratorios matriculados, créditos, vacantes libres en la oferta y laboratorios que aún puede tomar) y la lista \textit{Mis laboratorios}, donde cada matrícula tiene una franja con el color del curso y los botones \textbf{Ver pase QR} y \textbf{Anular}. En el panel (c) se ve la misma pantalla en tema oscuro, ya con dos laboratorios.
+\textbf{Componentes y layout.} Toda la pantalla se desplaza y admite el gesto de deslizar hacia abajo para actualizar. Los cuatro indicadores están en una fila que salta de línea: cada uno ocupa casi media fila, de modo que en un teléfono se forman dos columnas y en una pantalla ancha caben cuatro sin cambiar nada. La franja de color de cada matrícula es una vista angosta y el contenido ocupa el resto de la fila. Al comparar (b) y (c) se ve que los indicadores se actualizan solos: 2 laboratorios, 6 créditos y una vacante menos en la oferta.
 
-\textbf{Componentes y layout.} Un \texttt{Scroll\allowbreak{}View} con \texttt{Refresh\allowbreak{}Control} permite deslizar para actualizar. Los cuatro KPI están en una fila con \texttt{flex\allowbreak{}Wrap: 'wrap'} y cada \texttt{Kpi} usa \texttt{flex\allowbreak{}Basis: '47\%'} y \texttt{flex\allowbreak{}Grow: 1}: en un teléfono se forman dos columnas y en una pantalla ancha caben cuatro sin cambiar el código. La tarjeta de cada matrícula es una fila donde la franja de color es un \texttt{View} de 5 dp de ancho y el contenido ocupa el resto con \texttt{flex: 1}. Anular usa el \texttt{Alert} nativo con un botón de estilo destructivo.
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.438\textwidth}{img/figuras/fig_x02.png}{Panel del estudiante: (a) dos laboratorios matriculados, (b) diálogo nativo para anular una matrícula}
+\caption{Panel del estudiante: (a) dos laboratorios matriculados, (b) diálogo nativo para anular una matrícula}
+\label{fig:x02}
+\end{figure}
 
-\needspace{10\baselineskip}
-\begin{lstlisting}[language=TSX, title={DashboardScreen.tsx · cuadrícula de indicadores}]
-<View style={estilos.kpis}>
-  <Kpi valor={String(activas.length)} etiqueta="Laboratorios matriculados" icono="flask-outline" />
-  <Kpi valor={String(creditos)} etiqueta="Créditos con laboratorio" icono="ribbon-outline" color={c.marca} />
-  ...
-</View>
-// kpis: { flexDirection: 'row', flexWrap: 'wrap', gap: espacio.m }
-// kpi:  { flexBasis: '47%', flexGrow: 1 }
-\end{lstlisting}
-\par\penalty-100
+Al pulsar \textbf{Anular} aparece el diálogo nativo de Android con la opción destructiva destacada. Si se confirma, el cupo vuelve a la oferta al instante y el semáforo del grupo se recalcula en el catálogo.
 
-\clearpage
 \subsubtitulo{I3 · Catálogo de grupos con semáforo}
 
-\begin{figure}[H]
+\textbf{Elementos.} Lista todos los grupos de laboratorio agrupados por curso. Cada tarjeta muestra la letra del grupo, día y hora, ambiente y docente, la insignia del semáforo (\textit{Agotado}, \textit{Últimos cupos}, \textit{Disponible}), una barra de ocupación y el texto \textit{N de M PC libres}. Con el filtro \textit{Sin cruce de horario} (panel c) desaparece el grupo C de Plataformas Emergentes, que coincide con la teoría de Gestión de Proyectos del jueves.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i03.png}{Catálogo: (a) mockup, (b) todos los grupos, (c) filtro Sin cruce de horario}
+\safeimage{0.666\textwidth}{img/figuras/fig_i03.png}{Catálogo: (a) mockup, (b) todos los grupos, (c) filtro Sin cruce de horario}
 \caption{Catálogo: (a) mockup, (b) todos los grupos, (c) filtro Sin cruce de horario}
+\label{fig:i03}
 \end{figure}
 
-\textbf{Elementos.} Lista todos los grupos de laboratorio agrupados por curso. Cada tarjeta muestra la letra del grupo, día y hora, ambiente y docente, la insignia del semáforo (\textit{Agotado}, \textit{Últimos cupos}, \textit{Disponible}), una barra de ocupación y el texto \textit{N de M PC libres}. Arriba hay un buscador y tres filtros. Con el filtro \textit{Sin cruce de horario} (panel c) desaparece el grupo C de Plataformas Emergentes, que coincide con la teoría de Gestión de Proyectos del jueves.
+\textbf{Componentes y layout.} La lista está dividida en secciones, una por curso, y el nombre del curso queda fijo arriba mientras se desplazan sus grupos. Los filtros son chips dentro de una fila con desplazamiento horizontal, de modo que pueden agregarse más sin romper el diseño. En cada tarjeta la letra del grupo es un cuadro de tamaño fijo, el texto ocupa el espacio libre y la insignia queda al final de la fila.
 
-\textbf{Componentes y layout.} La lista es una \texttt{Section\allowbreak{}List} con una sección por curso; \texttt{render\allowbreak{}Section\allowbreak{}Header} dibuja el punto de color y el nombre del curso, y \texttt{sticky\allowbreak{}Section\allowbreak{}Headers\allowbreak{}Enabled} lo mantiene fijo mientras se desplazan sus grupos. Los filtros son chips dentro de un \texttt{Scroll\allowbreak{}View} horizontal, de modo que pueden agregarse más sin romper el diseño. En cada tarjeta, la letra del grupo es un cuadro de 44 × 44 dp centrado con \texttt{align\allowbreak{}Items} y \texttt{justify\allowbreak{}Content}, el texto toma el espacio libre con \texttt{flex: 1} y la insignia queda al final de la fila.
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.667\textwidth}{img/figuras/fig_x03.png}{Catálogo: (a) búsqueda por nombre de curso, (b) estado vacío sin resultados, (c) filtro Con vacantes}
+\caption{Catálogo: (a) búsqueda por nombre de curso, (b) estado vacío sin resultados, (c) filtro Con vacantes}
+\label{fig:x03}
+\end{figure}
 
-\needspace{13\baselineskip}
-\begin{lstlisting}[language=TSX, title={CatalogoScreen.tsx · lista por secciones}]
-<SectionList
-  sections={secciones}                 // [{ curso, data: Turno[] }, ...]
-  keyExtractor={(t) => t.id}
-  renderItem={renderTurno}             // Tarjeta tocable con semáforo y barra
-  stickySectionHeadersEnabled
-  renderSectionHeader={({ section }) => (
-    <View style={estilos.seccion}>{/* punto de color + nombre del curso */}</View>
-  )}
-  ListEmptyComponent={<Vacio icono="search-outline" titulo="Sin resultados" detalle="..." />}
-/>
-\end{lstlisting}
-\par\penalty-100
+El buscador filtra por curso, grupo o día mientras se escribe (a). Si no hay coincidencias aparece un estado vacío con un mensaje que orienta al usuario (b). El filtro \textit{Con vacantes} oculta los grupos agotados, como el grupo A de Plataformas Emergentes (c).
 
-\clearpage
 \subsubtitulo{I4 · Detalle del grupo y confirmación}
 
-\begin{figure}[H]
+\textbf{Elementos.} Se abre como hoja modal desde el catálogo. Presenta el curso, las insignias de grupo y semáforo, una tarjeta con horario, ambiente, docente y equipamiento, y el \textbf{mapa de puestos}: una celda por computadora, en rojo las ocupadas y en verde las libres. Debajo, un aviso verde confirma que no hay cruces (b); si hay un cruce, el aviso rojo indica con qué curso y en qué horario (c); si el grupo está lleno, informa que no hay vacantes (d). En los dos últimos casos el botón \textbf{Confirmar matrícula} queda deshabilitado.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i04.png}{Detalle del grupo: (a) mockup, (b) grupo B disponible, (c) grupo C bloqueado por cruce con la teoría (RN-02)}
-\caption{Detalle del grupo: (a) mockup, (b) grupo B disponible, (c) grupo C bloqueado por cruce con la teoría (RN-02)}
+\safeimage{0.895\textwidth}{img/figuras/fig_i04.png}{Detalle del grupo: (a) mockup, (b) grupo B disponible, (c) grupo C bloqueado por cruce con la teoría (RN-02), (d) grupo A agotado}
+\caption{Detalle del grupo: (a) mockup, (b) grupo B disponible, (c) grupo C bloqueado por cruce con la teoría (RN-02), (d) grupo A agotado}
+\label{fig:i04}
 \end{figure}
 
-\textbf{Elementos.} Se abre como hoja modal desde el catálogo. Presenta el curso, las insignias de grupo y semáforo, una tarjeta con horario, ambiente, docente y equipamiento, y el \textbf{mapa de puestos}: una celda por computadora, en rojo las ocupadas y en verde las libres. Debajo, un aviso verde confirma que no hay cruces; si los hay, el aviso rojo explica con qué curso y en qué horario, y el botón \textbf{Confirmar matrícula} queda deshabilitado (panel c).
+\textbf{Componentes y layout.} El mapa de puestos es una fila que salta de línea con celdas de tamaño fijo: con 20, 25 o 30 computadoras la cuadrícula se reacomoda sola en cualquier ancho. El botón de confirmación está en un pie fuera del área desplazable, siempre visible. Al confirmar se muestra un indicador de carga y luego el detalle se reemplaza por el pase, para que el botón Atrás no regrese a un formulario ya enviado.
 
-\textbf{Componentes y layout.} El mapa de puestos es un \texttt{View} con \texttt{flex\allowbreak{}Direction: 'row'}, \texttt{flex\allowbreak{}Wrap: 'wrap'} y \texttt{gap: 6}, cuyas celdas miden 46 × 40 dp. Con 20, 25 o 30 computadoras la cuadrícula se reacomoda sola en cualquier ancho. El botón de confirmación vive en un pie \textbf{fuera} del \texttt{Scroll\allowbreak{}View}, así siempre está visible. Al confirmar, un \texttt{Activity\allowbreak{}Indicator} simula la latencia del servidor y luego \texttt{navigation.\allowbreak{}replace} sustituye el detalle por el pase, para que Atrás no regrese a un formulario ya enviado.
-
-\needspace{12\baselineskip}
-\begin{lstlisting}[language=TSX, title={DetalleTurnoScreen.tsx · mapa de puestos}]
-<View style={estilos.mapa}>   {/* flexDirection: 'row', flexWrap: 'wrap', gap: 6 */}
-  {Array.from({ length: turno.cuposTotales }, (_, i) => (
-    <View key={i} style={[estilos.pc, { backgroundColor: i < turno.cuposOcupados ? c.peligroSuave : c.exitoSuave }]}>
-      <Ionicons name="desktop-outline" size={14} color={i < turno.cuposOcupados ? c.peligro : c.exito} />
-      <Text style={estilos.numeroPc}>{i + 1}</Text>
-    </View>
-  ))}
-</View>
-// pc: { width: 46, height: 40, alignItems: 'center', justifyContent: 'center' }
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I5 · Pase de laboratorio con QR}
 
-\begin{figure}[H]
+\textbf{Elementos.} Es la constancia digital que el estudiante muestra en la puerta del laboratorio. La parte superior, en color primario, lleva el curso, el grupo, el horario y el sello \textit{Confirmada}; la inferior, el código QR, el código de verificación de ocho caracteres y los datos del estudiante, el ambiente y la matrícula. \textbf{Compartir pase} abre la hoja nativa del sistema con el texto del pase listo para enviarse (c).
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.44\textwidth}{img/figuras/fig_i05.png}{Pase de laboratorio: (a) mockup, (b) pase emitido tras confirmar la matrícula}
-\caption{Pase de laboratorio: (a) mockup, (b) pase emitido tras confirmar la matrícula}
+\safeimage{0.666\textwidth}{img/figuras/fig_i05.png}{Pase de laboratorio: (a) mockup, (b) pase emitido tras confirmar la matrícula, (c) hoja nativa de compartir}
+\caption{Pase de laboratorio: (a) mockup, (b) pase emitido tras confirmar la matrícula, (c) hoja nativa de compartir}
+\label{fig:i05}
 \end{figure}
 
-\textbf{Elementos.} Es la constancia digital que el estudiante muestra en la puerta del laboratorio. La parte superior, en color primario, lleva el curso, el grupo, el horario y el sello \textit{Confirmada}; la inferior, el código QR, el código de verificación de ocho caracteres y los datos del estudiante, el ambiente y la matrícula. El botón \textbf{Compartir pase} abre la hoja nativa de compartir.
+\textbf{Componentes y layout.} La tarjeta está dividida en dos zonas. La perforación entre ellas se dibuja con dos círculos del color del fondo colocados con posición absoluta en los bordes y una línea discontinua. El sello \textit{Confirmada} también se ubica con posición absoluta en la esquina superior derecha. El tamaño del QR se calcula a partir del ancho de la pantalla y los datos se ordenan en dos columnas de 50 \% cada una.
 
-\textbf{Componentes y layout.} La tarjeta del pase es un \texttt{View} con \texttt{overflow: 'hidden'} dividido en dos zonas. Entre ellas, la perforación se dibuja con dos círculos del color del fondo en \texttt{position: 'absolute'} (\texttt{left: -12} y \texttt{right: -12}) y una línea discontinua. El sello usa \texttt{position: 'absolute'} con \texttt{top} y \texttt{right}. El lado del QR se calcula con \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} (\texttt{Math.\allowbreak{}min(220, width - 140)}) y los datos se ordenan en dos columnas con \texttt{flex\allowbreak{}Wrap} y \texttt{width: '50\%'} en cada dato.
-
-\needspace{10\baselineskip}
-\begin{lstlisting}[language=TSX, title={FichaQRScreen.tsx · perforación y código QR}]
-<View style={estilos.perforacion}>
-  <View style={[estilos.muesca, { left: -12, backgroundColor: c.fondo }]} />
-  <View style={[estilos.guiones, { borderColor: c.borde }]} />
-  <View style={[estilos.muesca, { right: -12, backgroundColor: c.fondo }]} />
-</View>
-<QRCode value={payloadQR(m)} size={ladoQR} color="#14202E" backgroundColor="#FFFFFF" />
-// muesca: { position: 'absolute', width: 24, height: 24, borderRadius: 12 }
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I6 · Horario semanal consolidado}
 
-\begin{figure}[H]
+\textbf{Elementos.} Consolida en una semana los laboratorios matriculados (bloques rellenos con el color del curso) y las clases de teoría (bloques con borde discontinuo). El selector \textit{Semana / Lista} cambia a una vista de tarjetas agrupadas por día (c). Tras matricularse en Plataformas Emergentes aparece el nuevo bloque del martes de 14:00 a 15:40 (d).
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i06.png}{Horario: (a) mockup, (b) vista semanal, (c) vista de lista por día}
-\caption{Horario: (a) mockup, (b) vista semanal, (c) vista de lista por día}
+\safeimage{0.895\textwidth}{img/figuras/fig_i06.png}{Horario: (a) mockup, (b) vista semanal, (c) vista de lista por día, (d) semana después de matricularse en Plataformas Emergentes}
+\caption{Horario: (a) mockup, (b) vista semanal, (c) vista de lista por día, (d) semana después de matricularse en Plataformas Emergentes}
+\label{fig:i06}
 \end{figure}
 
-\textbf{Elementos.} Consolida en una semana los laboratorios matriculados (bloques rellenos con el color del curso) y las clases de teoría (bloques con borde discontinuo). El selector \textit{Semana / Lista} cambia a una vista de tarjetas agrupadas por día, más cómoda para leer en un teléfono pequeño.
+\textbf{Componentes y layout.} Como React Native no tiene una cuadrícula al estilo de CSS Grid, el horario se construye a mano: una columna de horas y cinco columnas de día en fila, con el ancho de cada día calculado a partir del ancho de la ventana. Cada bloque se coloca con posición absoluta: su distancia desde arriba corresponde a la hora de inicio y su alto a la duración. Si la pantalla es muy angosta, la cuadrícula pasa a desplazarse en horizontal.
 
-\textbf{Componentes y layout.} La cuadrícula se construye a mano porque React Native no tiene CSS Grid. Una columna de horas y cinco columnas de día se colocan en fila; el ancho de cada día sale de \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} con un mínimo de 64 dp. Dentro de cada día, cada bloque usa \texttt{position: 'absolute'} con \texttt{top} igual a la hora de inicio y \texttt{height} igual a la duración, ambos convertidos con una constante de 58 dp por hora. Si el ancho mínimo no cabe, la cuadrícula se envuelve en un \texttt{Scroll\allowbreak{}View} horizontal.
-
-\needspace{14\baselineskip}
-\begin{lstlisting}[language=TSX, title={HorarioScreen.tsx · cuadrícula con posición absoluta}]
-const disponible = width - espacio.l * 2 - CANAL_HORAS;
-const anchoDia = Math.max(64, disponible / DIAS_VISIBLES.length);
-const desborda = anchoDia * DIAS_VISIBLES.length > disponible + 1;
-...
-style={{
-  top: (e.inicio - INICIO) / 60 * ALTO_HORA + 1,
-  height: (e.fin - e.inicio) / 60 * ALTO_HORA - 2,
-  borderStyle: lab ? 'solid' : 'dashed',
-}}
-...
-{desborda ? <ScrollView horizontal>{cuadricula}</ScrollView> : cuadricula}
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I7 · Panel del docente}
 
-\begin{figure}[H]
+\textbf{Elementos.} Resume la carga del docente: grupos a cargo, estudiantes inscritos sobre la capacidad, ocupación promedio y asistencias registradas en el día. Un botón destacado lleva al escáner y debajo se listan los grupos con semáforo, barra de ocupación y acceso a la \textbf{Nómina} de cada uno.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.44\textwidth}{img/figuras/fig_i07.png}{Panel del docente: (a) mockup, (b) panel con los grupos a cargo}
-\caption{Panel del docente: (a) mockup, (b) panel con los grupos a cargo}
+\safeimage{0.666\textwidth}{img/figuras/fig_i07.png}{Panel del docente: (a) mockup, (b) panel con los grupos a cargo, (c) grupos después de registrar una asistencia}
+\caption{Panel del docente: (a) mockup, (b) panel con los grupos a cargo, (c) grupos después de registrar una asistencia}
+\label{fig:i07}
 \end{figure}
 
-\textbf{Elementos.} Resume la carga del docente: grupos a cargo, estudiantes inscritos sobre la capacidad, ocupación promedio y asistencias registradas en el día. Un botón destacado lleva al escáner y debajo se listan los grupos con semáforo, barra de ocupación y acceso a la \textbf{Nómina}.
+\textbf{Componentes y layout.} Toda la pantalla es una sola lista virtualizada: el saludo, los indicadores y el botón forman la cabecera de la propia lista y se desplazan junto con los grupos. Así se evita colocar una lista dentro de otro contenedor desplazable, situación que React Native desaconseja. Las cabeceras de cada tarjeta reparten el espacio entre el nombre del grupo y su insignia.
 
-\textbf{Componentes y layout.} Toda la pantalla es una sola \texttt{Flat\allowbreak{}List}. El saludo, los KPI y el botón van en \texttt{List\allowbreak{}Header\allowbreak{}Component}, de modo que se desplazan junto con la lista sin anidar una lista dentro de un \texttt{Scroll\allowbreak{}View}, situación que React Native desaconseja porque anula la virtualización. Las cabeceras de cada tarjeta usan \texttt{justify\allowbreak{}Content: 'space-between'}.
-
-\needspace{10\baselineskip}
-\begin{lstlisting}[language=TSX, title={PanelDocenteScreen.tsx · cabecera dentro de la lista}]
-<FlatList
-  data={mios}
-  keyExtractor={(t) => t.id}
-  ItemSeparatorComponent={() => <View style={{ height: espacio.m }} />}
-  ListHeaderComponent={<View>{/* saludo, KPI y botón Escanear */}</View>}
-  renderItem={({ item }) => <Tarjeta>{/* curso, semáforo, barra y botón Nómina */}</Tarjeta>}
-/>
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I8 · Nómina y asistencia}
 
-\begin{figure}[H]
+\textbf{Elementos.} Lista a los estudiantes del grupo ordenados alfabéticamente, con número, nombre y CUI. Tocar una fila registra la asistencia con la hora y la fila pasa de \textit{Pendiente} a una píldora verde. El resumen superior muestra presentes sobre el total, una barra de avance y un buscador por nombre o CUI. El pie ofrece \textbf{Exportar CSV} y \textbf{Escanear}.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.44\textwidth}{img/figuras/fig_i08.png}{Nómina del grupo: (a) mockup, (b) dos asistencias registradas con su hora}
+\safeimage{0.437\textwidth}{img/figuras/fig_i08.png}{Nómina del grupo: (a) mockup, (b) dos asistencias registradas con su hora}
 \caption{Nómina del grupo: (a) mockup, (b) dos asistencias registradas con su hora}
+\label{fig:i08}
 \end{figure}
 
-\textbf{Elementos.} Lista a los estudiantes del grupo ordenados alfabéticamente, con número, nombre y CUI. Tocar una fila registra la asistencia con la hora; la fila pasa de \textit{Pendiente} a una píldora verde. El resumen superior muestra presentes sobre el total, una barra de avance y un buscador por nombre o CUI. El pie ofrece \textbf{Exportar CSV} y \textbf{Escanear}.
+\textbf{Componentes y layout.} Es una lista virtualizada cuyo primer elemento, el resumen, queda fijo arriba mientras se desplazan los estudiantes. Las filas tienen alto constante para que el desplazamiento sea uniforme, y cada una se anuncia al lector de pantalla como una casilla marcada o sin marcar. El título de la cabecera cambia según el curso y el grupo.
 
-\textbf{Componentes y layout.} Es una \texttt{Flat\allowbreak{}List} cuyo primer elemento, el resumen, queda fijo con \texttt{sticky\allowbreak{}Header\allowbreak{}Indices=\allowbreak{}\{[0]\}}. Las filas tienen alto constante (68 dp) para que el desplazamiento sea uniforme. Cada fila es un \texttt{Pressable} con \texttt{accessibility\allowbreak{}Role=\allowbreak{}"checkbox"} y \texttt{accessibility\allowbreak{}State} marcado, de modo que el lector de pantalla anuncia si el estudiante ya está presente. El título de la cabecera se cambia con \texttt{navigation.\allowbreak{}set\allowbreak{}Options}.
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.438\textwidth}{img/figuras/fig_x08.png}{Nómina: (a) búsqueda por apellido, (b) exportación de la nómina en CSV con la hoja nativa de compartir}
+\caption{Nómina: (a) búsqueda por apellido, (b) exportación de la nómina en CSV con la hoja nativa de compartir}
+\label{fig:x08}
+\end{figure}
 
-\needspace{15\baselineskip}
-\begin{lstlisting}[language=TSX, title={NominaScreen.tsx · resumen fijo y filas marcables}]
-<FlatList
-  data={visibles}
-  keyExtractor={(f) => f.id}
-  stickyHeaderIndices={[0]}
-  ListHeaderComponent={<View style={estilos.resumen}>{/* presentes, barra y buscador */}</View>}
-  renderItem={({ item, index }) => (
-    <Pressable onPress={() => marcar(item.id)} disabled={Boolean(estado.asistencias[item.id])}
-      accessibilityRole="checkbox" accessibilityState={{ checked: Boolean(estado.asistencias[item.id]) }}>
-      ...
-    </Pressable>
-  )}
-/>
-\end{lstlisting}
-\par\penalty-100
+El buscador reduce la lista a medida que se escribe (a). \textbf{Exportar CSV} genera la nómina con separador punto y coma (el formato que Excel en español abre sin asistente) y la entrega a la hoja de compartir del sistema, desde donde puede enviarse por correo o guardarse en Drive (b).
 
-\clearpage
 \subsubtitulo{I9 · Escáner de asistencia}
 
-\begin{figure}[H]
+\textbf{Elementos.} Muestra la vista de la cámara con una guía de encuadre y lee el QR del pase. Si la cámara no está disponible, el docente puede digitar el código de verificación de ocho caracteres. El resultado aparece en una tarjeta verde con el nombre del estudiante, el curso y la hora (c), o en una roja si el pase no corresponde a una matrícula vigente o es de otro docente (d). En (d) se ve además el estado previo al permiso de cámara, con el botón \textit{Permitir cámara}.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i09.png}{Escáner: (a) mockup, (b) cámara activa en el emulador, (c) pase validado con el código de verificación}
-\caption{Escáner: (a) mockup, (b) cámara activa en el emulador, (c) pase validado con el código de verificación}
+\safeimage{0.895\textwidth}{img/figuras/fig_i09.png}{Escáner: (a) mockup, (b) cámara activa en el emulador, (c) pase validado, (d) código rechazado}
+\caption{Escáner: (a) mockup, (b) cámara activa en el emulador, (c) pase validado, (d) código rechazado}
+\label{fig:i09}
 \end{figure}
 
-\textbf{Elementos.} Muestra la vista de la cámara con una guía de encuadre y lee el QR del pase. Si la cámara no está disponible, el docente puede digitar el código de verificación de ocho caracteres. El resultado aparece en una tarjeta verde con el nombre del estudiante, el curso y la hora, o en una roja si el pase es inválido o pertenece a otro docente.
+\textbf{Componentes y layout.} La vista de la cámara cubre todo su recuadro y encima se coloca otra capa transparente a los toques, que dibuja las cuatro esquinas del marco y la leyenda. Cada esquina es una vista con posición absoluta y dos bordes. El campo manual convierte lo escrito a mayúsculas, solo acepta caracteres hexadecimales y limita la longitud a ocho, y el lector se bloquea unos segundos después de cada código para no registrar dos veces al mismo estudiante.
 
-\textbf{Componentes y layout.} El visor es un \texttt{View} de 340 dp de alto con \texttt{overflow: 'hidden'}. La \texttt{Camera\allowbreak{}View} lo cubre con \texttt{Style\allowbreak{}Sheet.\allowbreak{}absolute\allowbreak{}Fill} y encima se coloca otra capa con \texttt{absolute\allowbreak{}Fill} y \texttt{pointer\allowbreak{}Events=\allowbreak{}"none"}, que dibuja las cuatro esquinas del marco (cada una un \texttt{View} absoluto con dos bordes) y la leyenda. El campo manual normaliza lo escrito a mayúsculas hexadecimales y limita la longitud a ocho caracteres. Para evitar lecturas repetidas se bloquea el lector durante 2,5 s después de cada código.
-
-\needspace{13\baselineskip}
-\begin{lstlisting}[language=TSX, title={EscanerScreen.tsx · cámara con capa superpuesta}]
-<View style={estilos.visor}>
-  <CameraView style={StyleSheet.absoluteFill} facing="back"
-    barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={alLeer} />
-  <View style={[StyleSheet.absoluteFill, estilos.capa]} pointerEvents="none">
-    <View style={estilos.marco}>
-      {(['si', 'sd', 'ii', 'id'] as const).map((p) => <View key={p} style={[estilos.esquina, estilos[p]]} />)}
-    </View>
-    <Text style={estilos.ayuda}>Encuadra el código QR del pase</Text>
-  </View>
-</View>
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I10 · Gestión de laboratorios}
 
-\begin{figure}[H]
+\textbf{Elementos.} La coordinación ve el total de computadoras operativas y una tarjeta por ambiente con ubicación, equipamiento, capacidad ajustable con los botones − y +, barra de puestos reservados, interruptor de habilitación y botón \textbf{Editar datos}, que abre una hoja inferior para cambiar nombre, ubicación y equipamiento (c). Al desactivar un laboratorio su insignia pasa a \textit{Inhabilitado} y el total de la cabecera baja de 100 a 75 PC (d).
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.66\textwidth}{img/figuras/fig_i10.png}{Gestión de laboratorios: (a) mockup, (b) lista de ambientes, (c) edición en la hoja modal}
-\caption{Gestión de laboratorios: (a) mockup, (b) lista de ambientes, (c) edición en la hoja modal}
+\safeimage{0.895\textwidth}{img/figuras/fig_i10.png}{Gestión de laboratorios: (a) mockup, (b) lista de ambientes, (c) edición en la hoja modal, (d) laboratorio inhabilitado y capacidad ajustada}
+\caption{Gestión de laboratorios: (a) mockup, (b) lista de ambientes, (c) edición en la hoja modal, (d) laboratorio inhabilitado y capacidad ajustada}
+\label{fig:i10}
 \end{figure}
 
-\textbf{Elementos.} La coordinación ve el total de computadoras operativas y una tarjeta por ambiente con ubicación, equipamiento, capacidad ajustable con botones − y +, barra de puestos reservados, interruptor de habilitación y botón \textbf{Editar datos}, que abre una hoja inferior para cambiar nombre, ubicación y equipamiento.
+\textbf{Componentes y layout.} La lista calcula el número de columnas según el ancho: una por debajo de 600 dp, dos hasta 960 dp y tres en adelante (ver sección 4.7). La edición usa el Modal nativo con fondo transparente: una capa semitransparente ocupa la pantalla y al tocarla se cierra, mientras la hoja con esquinas superiores redondeadas queda abajo.
 
-\textbf{Componentes y layout.} La lista es una \texttt{Flat\allowbreak{}List} con \texttt{num\allowbreak{}Columns} calculado a partir del ancho: una columna por debajo de 600 dp, dos hasta 960 dp y tres en adelante. \texttt{column\allowbreak{}Wrapper\allowbreak{}Style} agrega el espacio entre columnas. La edición usa el \texttt{Modal} nativo con fondo transparente: un \texttt{Pressable} semitransparente ocupa la pantalla (tocarlo cierra) y la hoja con esquinas superiores redondeadas queda abajo.
-
-\needspace{14\baselineskip}
-\begin{lstlisting}[language=TSX, title={LaboratoriosScreen.tsx · columnas según el ancho y edición modal}]
-const { width } = useWindowDimensions();
-const columnas = width < 600 ? 1 : width < 960 ? 2 : 3;
-
-<FlatList
-  key={columnas}
-  data={estado.laboratorios}
-  numColumns={columnas}
-  columnWrapperStyle={columnas > 1 ? { gap: espacio.m } : undefined}
-  ...
-/>
-<Modal visible={edicion !== null} animationType="slide" transparent onRequestClose={() => setEdicion(null)}>
-\end{lstlisting}
-\par\penalty-100
-
-\clearpage
 \subsubtitulo{I11 · Configuración de la matrícula}
 
-\begin{figure}[H]
+\textbf{Elementos.} Permite fijar la apertura y el cierre de la ventana de matrícula, el máximo de laboratorios por estudiante y dos reglas: permitir anular matrículas y avisar cuando un grupo se agota. Muestra el estado actual de la ventana y, al final, la lista de grupos agotados con la opción de solicitar un grupo adicional.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.44\textwidth}{img/figuras/fig_i11.png}{Configuración de la matrícula: (a) mockup, (b) ventana abierta y reglas}
+\safeimage{0.437\textwidth}{img/figuras/fig_i11.png}{Configuración de la matrícula: (a) mockup, (b) ventana abierta y reglas}
 \caption{Configuración de la matrícula: (a) mockup, (b) ventana abierta y reglas}
+\label{fig:i11}
 \end{figure}
 
-\textbf{Elementos.} Permite fijar la apertura y el cierre de la ventana de matrícula, el máximo de laboratorios por estudiante y dos reglas: permitir anular matrículas y avisar cuando un grupo se agota. Muestra el estado actual de la ventana y la lista de grupos agotados con la opción de solicitar un grupo adicional.
+\textbf{Componentes y layout.} Es un formulario desplazable en el que tocar un botón no solo cierra el teclado. Cada regla es una fila con el texto a la izquierda y el interruptor a la derecha. Antes de guardar se valida el formato de fecha, que el cierre sea posterior a la apertura y que el máximo esté entre 1 y 6.
 
-\textbf{Componentes y layout.} Es un formulario en un \texttt{Scroll\allowbreak{}View} con \texttt{keyboard\allowbreak{}Should\allowbreak{}Persist\allowbreak{}Taps=\allowbreak{}"handled"}, para que tocar un botón no solo cierre el teclado. Cada regla es una fila con \texttt{justify\allowbreak{}Content: 'space-between'}: texto a la izquierda con \texttt{flex: 1} y \texttt{Switch} a la derecha. Antes de guardar se valida el formato \texttt{dd/\allowbreak{}mm/\allowbreak{}aaaa hh:mm}, que el cierre sea posterior a la apertura y que el máximo esté entre 1 y 6; el error aparece sobre el botón.
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.667\textwidth}{img/figuras/fig_x11.png}{Configuración: (a) fecha inválida rechazada, (b) confirmación nativa al guardar, (c) grupos agotados al final del formulario}
+\caption{Configuración: (a) fecha inválida rechazada, (b) confirmación nativa al guardar, (c) grupos agotados al final del formulario}
+\label{fig:x11}
+\end{figure}
 
-\needspace{12\baselineskip}
-\begin{lstlisting}[language=TSX, title={ConfiguracionScreen.tsx · validación de la ventana}]
-const guardar = () => {
-  const i = aISO(inicio);
-  const f = aISO(fin);
-  const max = Number(maximo);
-  if (!i || !f) return setError('Usa el formato dd/mm/aaaa hh:mm en ambas fechas.');
-  if (new Date(f) <= new Date(i)) return setError('El cierre debe ser posterior a la apertura.');
-  if (!Number.isInteger(max) || max < 1 || max > 6) return setError('El máximo de laboratorios debe estar entre 1 y 6.');
-  dispatch({ tipo: 'ACTUALIZAR_CONFIG', config: { inicio: i, fin: f, maxLaboratoriosPorEstudiante: max, ... } });
-};
-\end{lstlisting}
-\par\penalty-100
+Una fecha inexistente como el 31 de febrero se rechaza con un mensaje sobre el botón (a). Con datos válidos aparece el diálogo nativo \textit{Configuración guardada} y la ventana se actualiza para todos los estudiantes (b). Al final del formulario se listan los grupos sin vacantes con la opción \textit{Evaluar grupo adicional} (c).
 
-\clearpage
 \subsubtitulo{I12 · Perfil y ajustes}
 
-\begin{figure}[H]
+\textbf{Elementos.} Es común a los tres roles. Muestra los datos del usuario y su rol, el selector de tema (\textit{Sistema}, \textit{Claro}, \textit{Oscuro}), dos interruptores de notificaciones, información del dispositivo y el botón \textbf{Cerrar sesión}, que reinicia la navegación hacia el inicio de sesión.
+
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.44\textwidth}{img/figuras/fig_i12.png}{Perfil y ajustes: (a) mockup, (b) perfil del estudiante}
-\caption{Perfil y ajustes: (a) mockup, (b) perfil del estudiante}
+\safeimage{0.666\textwidth}{img/figuras/fig_i12.png}{Perfil y ajustes: (a) mockup, (b) perfil del estudiante, (c) perfil del docente}
+\caption{Perfil y ajustes: (a) mockup, (b) perfil del estudiante, (c) perfil del docente}
+\label{fig:i12}
 \end{figure}
 
-\textbf{Elementos.} Es común a los tres roles. Muestra los datos del usuario, el selector de tema (\textit{Sistema}, \textit{Claro}, \textit{Oscuro}), dos interruptores de notificaciones, información del dispositivo y el botón \textbf{Cerrar sesión}, que reinicia la pila de navegación hacia el inicio de sesión.
-
-\textbf{Componentes y layout.} Las filas de ajustes reutilizan el componente \texttt{Fila\allowbreak{}Ajuste} (icono, texto con \texttt{flex: 1} y un control a la derecha). La sección \textit{Dispositivo} evidencia el entorno de ejecución: \texttt{Platform.\allowbreak{}OS} y \texttt{Platform.\allowbreak{}Version} indican el sistema, y \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} el tamaño de la ventana en dp y la escala de texto. En el emulador se lee \textit{android · versión 36} y \textit{411 × 914 dp}. El tema elegido se guarda en el \texttt{Theme\allowbreak{}Context} y repinta toda la aplicación al instante.
-
-\needspace{6\baselineskip}
-\begin{lstlisting}[language=TSX, title={PerfilScreen.tsx · datos del dispositivo}]
-<FilaAjuste icono="hardware-chip-outline" titulo="Plataforma" detalle={`${Platform.OS} · versión ${String(Platform.Version)}`} />
-<FilaAjuste icono="resize-outline" titulo="Ventana"
-  detalle={`${Math.round(width)} × ${Math.round(height)} dp · escala de texto ${fontScale.toFixed(2)}`} />
-\end{lstlisting}
-\par\penalty-100
+\textbf{Componentes y layout.} Las filas de ajustes repiten la misma estructura: icono, texto que ocupa el espacio libre y un control a la derecha. La sección \textit{Dispositivo} evidencia el entorno de ejecución: en el emulador indica \textit{android · versión 36} y el tamaño de la ventana en dp. El tema elegido se aplica de inmediato a toda la aplicación.
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{4.7 Adaptación a la orientación y a otras plataformas}
 \colabtitle{4.7 Adaptación a la orientación y a otras plataformas}
 
-Para comprobar que el layout responde al tamaño de la ventana se giró el emulador a horizontal. \texttt{use\allowbreak{}Window\allowbreak{}Dimensions} entrega entonces unos 915 dp de ancho y la lista de laboratorios pasa de una a dos columnas sin ningún código específico para la rotación (Figura 20). Para que esto fuera posible se cambió \texttt{orientation} a \texttt{"default"} en \texttt{app.\allowbreak{}json}, ya que con \texttt{"portrait"} el sistema bloqueaba el giro.
+Para comprobar que el layout responde al tamaño de la ventana se giró el emulador a horizontal. La ventana pasa a unos 915 dp de ancho y, sin código específico para la rotación, la lista de laboratorios pasa a dos columnas y el horario reparte el ancho adicional entre los cinco días (Figura \ref{fig:horizontal}).
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.85\textwidth}{img/capturas/13_laboratorios_horizontal.png}{Gestión de laboratorios en orientación horizontal: la FlatList pasa a dos columnas}
-\caption{Gestión de laboratorios en orientación horizontal: la FlatList pasa a dos columnas}
+\safeimage{0.72\textwidth}{img/figuras/fig_horizontal.png}{Orientación horizontal en el emulador: (a) laboratorios en dos columnas, (b) horario semanal}
+\caption{Orientación horizontal en el emulador: (a) laboratorios en dos columnas, (b) horario semanal}
 \label{fig:horizontal}
 \end{figure}
 
-El mismo código se exportó a la web con \texttt{npx expo export --platform web}. \texttt{react-native-web} traduce los componentes al DOM y la aplicación funciona en el navegador (Figura 21); la versión publicada está en \url{https://owerlopez.github.io/matrilab-epis-react-native/}.
+El mismo código se exportó a la web. react-native-web traduce los componentes a elementos del navegador y la aplicación funciona igual (Figura \ref{fig:web}); la versión publicada está en \url{https://owerlopez.github.io/matrilab-epis-react-native/}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
 \centering
-\safeimage{0.98\textwidth}{img/figuras/fig_web.png}{La misma aplicación ejecutándose en un navegador web: inicio de sesión, panel del estudiante y catálogo}
-\caption{La misma aplicación ejecutándose en un navegador web: inicio de sesión, panel del estudiante y catálogo}
+\safeimage{0.678\textwidth}{img/figuras/fig_web.png}{La misma aplicación en un navegador web: inicio de sesión, panel del estudiante y catálogo}
+\caption{La misma aplicación en un navegador web: inicio de sesión, panel del estudiante y catálogo}
 \label{fig:web}
+\end{figure}
+
+En una pantalla ancha la lista de laboratorios llega a tres columnas y en un ancho intermedio a dos, mientras la tarjeta del inicio de sesión mantiene su ancho máximo centrada (Figura \ref{fig:web_ancha}).
+
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.8\textwidth}{img/figuras/fig_web_ancha.png}{Versión web en distintos anchos: (a) 1366 px con tres columnas, (b) 820 px con dos columnas, (c) inicio de sesión centrado}
+\caption{Versión web en distintos anchos: (a) 1366 px con tres columnas, (b) 820 px con dos columnas, (c) inicio de sesión centrado}
+\label{fig:web_ancha}
 \end{figure}
 
 \vspace{0.2cm}
 \phantomsection\addcontentsline{toc}{subsection}{4.8 Pruebas automatizadas y verificación}
 \colabtitle{4.8 Pruebas automatizadas y verificación}
 
-Las reglas de negocio y el reductor se verificaron con \textbf{31 pruebas unitarias} en Jest [22], [23]. Se ejecutan con \texttt{npm test} y terminan en alrededor de un segundo porque no necesitan emulador. La Tabla 13 resume qué verifica cada grupo.
+Las reglas de negocio y el estado se verificaron con \textbf{31 pruebas unitarias} en Jest [22], [23], que se ejecutan en menos de cinco segundos porque no necesitan emulador. La verificación de tipos de TypeScript en modo estricto también termina sin errores (Figura \ref{fig:pruebas}). El dominio alcanza el 100 \% de líneas cubiertas.
+
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.62\textwidth}{img/proceso/04_typecheck_pruebas.png}{Verificación de tipos sin errores y 31 pruebas aprobadas en la consola}
+\caption{Verificación de tipos sin errores y 31 pruebas aprobadas en la consola}
+\label{fig:pruebas}
+\end{figure}
 
 \begin{table}[H]
 \centering\small
-\caption{Pruebas unitarias agrupadas por regla verificada}
+\caption{Pruebas unitarias agrupadas por regla verificada}\label{tab:pruebas}
 \renewcommand{\arraystretch}{1.25}
-\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.240\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.100\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.660\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
+\begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.250\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.100\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.650\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
 \hline
 \rowcolor{colabpyblue} \color{white}\textbf{Grupo} & \color{white}\textbf{Pruebas} & \color{white}\textbf{Qué se verifica} \\ \hline
-Conversión de horas & 1 & \texttt{'07:00'} equivale a 420 minutos y 640 minutos a \texttt{'10:40'}. \\ \hline
+Conversión de horas & 1 & 07:00 equivale a 420 minutos y 640 minutos a 10:40. \\ \hline
 \rowcolor{colabpybg} RN-02 cruce de horario & 3 & Solape el mismo día; bloques contiguos no se cruzan; días distintos no se cruzan. \\ \hline
 Semáforo & 1 & Rojo sin cupo, ámbar con menos del 30 \% libre y verde en otro caso. \\ \hline
-\rowcolor{colabpybg} validarMatricula & 8 & Acepta un grupo libre; rechaza cruce con teoría y con otro laboratorio, mismo grupo, mismo curso, grupo agotado, ventana cerrada y límite de laboratorios. \\ \hline
-Reserva atómica (RF-05) & 4 & Suma un cupo sin mutar el arreglo; no reserva sin cupo; nunca supera el aforo con más solicitudes que vacantes; liberar no deja negativos. \\ \hline
+\rowcolor{colabpybg} Validación de matrícula & 8 & Acepta un grupo libre; rechaza cruce con teoría y con otro laboratorio, mismo grupo, mismo curso, grupo agotado, ventana cerrada y límite. \\ \hline
+Reserva atómica (RF-05) & 4 & Suma un cupo sin alterar el estado anterior; no reserva sin cupo; nunca supera el aforo; liberar no deja negativos. \\ \hline
 \rowcolor{colabpybg} Pase QR & 3 & El contenido generado se verifica; un QR alterado se rechaza; la huella es estable y de 8 caracteres. \\ \hline
-Horario & 1 & Los bloques se ordenan por día y luego por hora. \\ \hline
-\rowcolor{colabpybg} Ventana y nómina & 3 & La ventana de demostración está abierta; la nómina tiene tantas filas como cupos; el CSV usa \texttt{;}. \\ \hline
-Reductor & 7 & Matricular y anular actualizan cupos; sin sesión no se matricula; cerrar sesión; acciones de administración; código de verificación; la asistencia se marca una sola vez. \\ \hline
+Horario y nómina & 4 & Orden de bloques; ventana abierta; nómina con tantas filas como cupos; CSV con punto y coma. \\ \hline
+\rowcolor{colabpybg} Estado global & 7 & Matricular y anular actualizan cupos; sin sesión no se matricula; acciones de administración; la asistencia se marca una sola vez. \\ \hline
 \end{tabular}
 \end{table}
 
-\needspace{16\baselineskip}
-\begin{lstlisting}[language=bash, title={Resultado de npm run test:cobertura}]
-PASS __tests__/reglas.test.ts
----------------|---------|----------|---------|---------|-------------------
-File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
----------------|---------|----------|---------|---------|-------------------
-All files      |    86.3 |    87.83 |   78.57 |   92.85 |
- domain        |   98.88 |    95.55 |     100 |     100 |
-  datos.ts     |     100 |      100 |     100 |     100 |
-  reglas.ts    |   98.52 |    95.34 |     100 |     100 | 132,140
- state         |   66.07 |    75.86 |      50 |   78.37 |
-  AppStore.tsx |   66.07 |    75.86 |      50 |   78.37 | 76-84,95-99
----------------|---------|----------|---------|---------|-------------------
-Tests:       31 passed, 31 total
-Time:        1.088 s
-\end{lstlisting}
-\par\penalty-100
-
-El dominio alcanza 100 \% de líneas cubiertas. En \texttt{App\allowbreak{}Store.\allowbreak{}tsx} quedan sin cubrir el proveedor de contexto y algunos selectores que solo se ejercitan al renderizar pantallas; esas rutas se verificaron en el recorrido manual y automatizado sobre Android descrito a continuación. Además, \texttt{npm run typecheck} (\texttt{tsc --no\allowbreak{}Emit}) termina sin errores en modo estricto.
+Además de las pruebas unitarias, todas las capturas de este informe se obtuvieron con un recorrido automatizado sobre el emulador que localiza cada control por su etiqueta de accesibilidad, lo toca o escribe en él y guarda la pantalla. Ese recorrido funciona como prueba de la navegación completa: iniciar sesión con cada rol, matricularse, ver y compartir el pase, marcar asistencia, validar y rechazar códigos, editar laboratorios, guardar la configuración y girar la pantalla.
 
 \vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{4.9 Ejecución en Android y recorrido automatizado de capturas}
-\colabtitle{4.9 Ejecución en Android y recorrido automatizado de capturas}
+\phantomsection\addcontentsline{toc}{subsection}{4.9 Registro de cambios}
+\colabtitle{4.9 Registro de cambios}
 
-La aplicación se ejecutó en el emulador con \texttt{npx expo start --android}, que inicia el servidor Metro y abre el proyecto en Expo Go. Para que las capturas del informe fueran reproducibles se escribió el script \texttt{herramientas/\allowbreak{}capturas-android.\allowbreak{}mjs}. El script recorre la aplicación por adb: con \texttt{uiautomator dump} obtiene el árbol de la pantalla, localiza los controles por su \texttt{accessibility\allowbreak{}Label} y los toca, escribe en los campos y guarda una captura de cada estado. Como depende de las etiquetas de accesibilidad y no de coordenadas, el mismo recorrido sirve en otro tamaño de pantalla y funciona además como prueba de humo de la navegación completa: iniciar sesión con cada rol, matricularse, ver el pase, marcar asistencia, validar el código en el escáner y girar la pantalla.
-
-\needspace{15\baselineskip}
-\begin{lstlisting}[language=TSX, title={herramientas/capturas-android.mjs · búsqueda de controles por accesibilidad}]
-async function buscar(etiqueta, { exacto = true, intentos = 20, desplazar = false } = {}) {
-  for (let i = 0; i < intentos; i++) {
-    const lista = nodos();
-    const coincide = (v) => (exacto ? v === etiqueta : v.includes(etiqueta));
-    // Primero la etiqueta de accesibilidad (el control) y luego el texto visible (p. ej. un rótulo).
-    const n = lista.find((x) => coincide(x.desc)) ?? lista.find((x) => coincide(x.texto));
-    if (n && n.y > 0 && n.y < 2380) return n;
-    if (desplazar) adb('shell', 'input', 'swipe', '540', '1700', '540', '800', '350');
-    await dormir(700);
-  }
-  throw new Error(`No se encontró «${etiqueta}» en pantalla`);
-}
-\end{lstlisting}
-\par\penalty-100
-
-\vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{4.10 Registro de cambios}
-\colabtitle{4.10 Registro de cambios}
-
-La guía pide dejar constancia de las modificaciones realizadas durante el trabajo. La Tabla 13 registra los cambios que surgieron al probar la aplicación en el emulador; en el documento DOCX cada cambio lleva además un comentario de revisión.
+La guía pide dejar constancia de las modificaciones realizadas durante el trabajo. La Tabla \ref{tab:cambios} registra los cambios que surgieron al probar la aplicación en el emulador.
 
 \begin{table}[H]
 \centering\footnotesize
-\caption{Cambios realizados durante el desarrollo y su motivo}
+\caption{Cambios realizados durante el desarrollo y su motivo}\label{tab:cambios}
 \renewcommand{\arraystretch}{1.25}
 \begin{tabular}{|>{\raggedright\arraybackslash}p{\dimexpr 0.060\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.220\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.350\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|>{\raggedright\arraybackslash}p{\dimexpr 0.370\linewidth-2\tabcolsep-2\arrayrulewidth\relax}|}
 \hline
-\rowcolor{colabpyblue} \color{white}\textbf{N.°} & \color{white}\textbf{Archivo} & \color{white}\textbf{Cambio} & \color{white}\textbf{Motivo} \\ \hline
-1 & LoginScreen.tsx & Se agregó \texttt{<Status\allowbreak{}Bar style=\allowbreak{}"light" /\allowbreak{}>}. & La hora y los iconos del sistema quedaban oscuros sobre el fondo azul. \\ \hline
-\rowcolor{colabpybg} 2 & LaboratoriosScreen.tsx & Una columna por debajo de 600 dp (antes dos desde 400 dp). & En el Pixel 7a (411 dp) las tarjetas quedaban comprimidas y el stepper se cortaba. \\ \hline
-3 & app.json & \texttt{orientation} pasó de \texttt{"portrait"} a \texttt{"default"}. & El sistema bloqueaba el giro y no se podía comprobar el layout horizontal. \\ \hline
-\rowcolor{colabpybg} 4 & EscanerScreen.tsx & El campo manual solo acepta hexadecimal en mayúsculas y 8 caracteres. & Evitar rechazos por minúsculas o espacios al dictar el código. \\ \hline
-5 & NominaScreen.tsx & Se retiró \texttt{get\allowbreak{}Item\allowbreak{}Layout}. & La cabecera fija tiene alto variable y desplazaba los índices calculados. \\ \hline
-\rowcolor{colabpybg} 6 & tsconfig.json & Se declararon los tipos \texttt{jest} y \texttt{node}. & TypeScript 6 no incluye tipos globales por defecto y \texttt{tsc} fallaba en las pruebas. \\ \hline
-7 & reglas.test.ts & Se agregaron 8 pruebas (de 23 a 31). & Cubrir los motivos YA\_MATRICULADO y cruce con laboratorio, y las acciones del reductor. \\ \hline
-\rowcolor{colabpybg} 8 & app.json & Se agregó \texttt{experiments.\allowbreak{}base\allowbreak{}Url} para la web. & Publicar la exportación web en GitHub Pages bajo una subruta. \\ \hline
+\rowcolor{colabpyblue} \color{white}\textbf{N.°} & \color{white}\textbf{Pantalla o archivo} & \color{white}\textbf{Cambio} & \color{white}\textbf{Motivo} \\ \hline
+1 & Inicio de sesión & Barra de estado en color claro. & La hora y los iconos del sistema quedaban oscuros sobre el fondo azul. \\ \hline
+\rowcolor{colabpybg} 2 & Laboratorios & Una columna por debajo de 600 dp (antes dos desde 400 dp). & En el Pixel 7a (411 dp) las tarjetas quedaban comprimidas. \\ \hline
+3 & Configuración de Expo & Orientación libre en lugar de solo vertical. & El sistema bloqueaba el giro y no se podía comprobar el layout horizontal. \\ \hline
+\rowcolor{colabpybg} 4 & Escáner & El campo manual solo acepta hexadecimal en mayúsculas y 8 caracteres. & Evitar rechazos por minúsculas o espacios al dictar el código. \\ \hline
+5 & Nómina & Se quitó el cálculo fijo de la posición de cada fila. & La cabecera fija tiene alto variable y desplazaba las filas. \\ \hline
+\rowcolor{colabpybg} 6 & Configuración de TypeScript & Se declararon los tipos de Jest y Node. & La verificación de tipos fallaba en los archivos de prueba. \\ \hline
+7 & Pruebas & Se agregaron 8 pruebas (de 23 a 31). & Cubrir el grupo ya matriculado, el cruce entre laboratorios y las acciones del estado. \\ \hline
+\rowcolor{colabpybg} 8 & Versión web & Ruta base para publicar en GitHub Pages. & Servir la aplicación desde una subcarpeta del sitio. \\ \hline
 \end{tabular}
 \end{table}
 
-\begin{notaInfo}
-Cambio 2: la regla de columnas se ajustó después de ver las tarjetas cortadas en el emulador; el umbral de 600 dp coincide con el límite habitual entre teléfono y tableta pequeña.
-\end{notaInfo}
-
-\begin{notaInfo}
-Cambio 3: con la orientación libre, la Figura 20 demuestra la adaptación automática de la rejilla.
-\end{notaInfo}
-
-\begin{notaOk}
-Cambios 6 y 7: el comando \texttt{npm run typecheck} y las 31 pruebas se ejecutan sin errores después de estos ajustes.
-\end{notaOk}
-
 \vspace{0.2cm}
-\phantomsection\addcontentsline{toc}{subsection}{4.11 Repositorio, ejecución y versión web}
-\colabtitle{4.11 Repositorio, ejecución y versión web}
+\phantomsection\addcontentsline{toc}{subsection}{4.10 Repositorio y despliegue}
+\colabtitle{4.10 Repositorio y despliegue}
 
-Todo el código, las capturas y este informe están en el repositorio \url{https://github.com/OwerLopez/matrilab-epis-react-native}. La versión web se publica automáticamente con GitHub Actions en \url{https://owerlopez.github.io/matrilab-epis-react-native/}. La carpeta \texttt{informe/\allowbreak{}} contiene las fuentes LaTeX de este documento, la versión DOCX, los diagramas en HTML y los scripts que los generan. Para ejecutar el proyecto:
+Todo el trabajo está en el repositorio público \url{https://github.com/OwerLopez/matrilab-epis-react-native} (Figura \ref{fig:repo}): el código de la aplicación, las pruebas, las capturas, el script del recorrido automatizado y este informe con sus fuentes LaTeX y diagramas.
 
-\needspace{10\baselineskip}
-\begin{lstlisting}[language=bash, title={Comandos de instalación y ejecución}]
-git clone https://github.com/OwerLopez/matrilab-epis-react-native.git
-cd matrilab-epis-react-native
-npm install
-npx expo start            # escanear el QR con Expo Go o pulsar «a» para el emulador Android
-npm test                  # 31 pruebas unitarias
-npm run typecheck         # verificación de tipos
-npm run export:web        # versión web en dist/
-\end{lstlisting}
-\par\penalty-100
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.9\textwidth}{img/proceso/05_github_repositorio.png}{Repositorio del proyecto en GitHub}
+\caption{Repositorio del proyecto en GitHub}
+\label{fig:repo}
+\end{figure}
 
-Credenciales de demostración: \texttt{olopeza@unsa.\allowbreak{}edu.\allowbreak{}pe}, \texttt{cmedina@unsa.\allowbreak{}edu.\allowbreak{}pe} o \texttt{laboratorios.\allowbreak{}epis@unsa.\allowbreak{}edu.\allowbreak{}pe} con la contraseña \texttt{unsa2026}, o los botones \textit{Estudiante}, \textit{Docente} y \textit{Admin} del inicio de sesión.
+En cada cambio publicado en la rama principal, GitHub Actions ejecuta la verificación de tipos y las 31 pruebas, exporta la versión web y la publica en GitHub Pages (Figura \ref{fig:actions}). Si una prueba falla, el despliegue no se realiza.
+
+\begin{figure}[!htbp]
+\centering
+\safeimage{0.9\textwidth}{img/proceso/06_github_actions.png}{Flujo de GitHub Actions: trabajos construir y desplegar completados}
+\caption{Flujo de GitHub Actions: trabajos construir y desplegar completados}
+\label{fig:actions}
+\end{figure}
+
+Para probar la aplicación basta abrir la versión web o, con el proyecto clonado, iniciar Metro y abrirlo en Expo Go. Cuentas de demostración: olopeza@unsa.edu.pe, cmedina@unsa.edu.pe o laboratorios.epis@unsa.edu.pe con la contraseña unsa2026, o los botones \textit{Estudiante}, \textit{Docente} y \textit{Admin} del inicio de sesión.
 
